@@ -95,11 +95,11 @@ void glKeys(unsigned char key, int x, int y, bool down) {
         break;
     case 't':
         angulo_bracos += 2.0f;
-        if (angulo_bracos >= 70.0f)angulo_bracos = 70.0f;
+        if (angulo_bracos >= 70.0f) angulo_bracos = 70.0f;
         break;
     case 'g':
         angulo_bracos -= 2.0f;
-        if (angulo_bracos <= -70.0f)angulo_bracos = -70.0f;
+        if (angulo_bracos <= -70.0f) angulo_bracos = -70.0f;
         break;
     default:break;
     }
