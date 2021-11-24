@@ -83,5 +83,11 @@
     <ClInclude Include="Particles.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClInclude>
+    <ClInclude Include="Particles.hpp">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="Gambiarra.hpp">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -104,6 +104,7 @@
       <AdditionalDependencies>glfw3.lib;opengl32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -136,6 +137,7 @@
       <AdditionalDependencies>glfw3.lib;opengl32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -184,6 +186,9 @@
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
     <ClInclude Include="Environment.hpp" />
+    <ClInclude Include="Gambiarra.hpp">
+      <FileType>CppHeader</FileType>
+    </ClInclude>
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Model.cpp">
       <DeploymentContent>false</DeploymentContent>
@@ -194,6 +199,7 @@
     <ClInclude Include="Particles.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
+    <ClInclude Include="Particles.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="snowman.cpp" />
     <ClInclude Include="stb_image.hpp">

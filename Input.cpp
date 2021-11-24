@@ -22,58 +22,65 @@ Input& Input::getInstance() {
 	return *instance;
 }
 
+void Input::initKeys(std::list<char>charlist) {
+	for (char c : charlist) {
+		key_press[c] = false;
+		key_threads[c] = std::thread(persistKey,c);
+		key_threads[c].join();
+	}
+}
+void Input::initSpcKeys(std::list<int>charlist) {
+	for (char c : charlist) {
+		spc_press[c] = false;
+		spc_threads[c] = std::thread(persistSpc,c);
+		spc_threads[c].join();
+	}
+}
+
 void Input::persistKey(unsigned char key) {
-	
-	while (!input_stop_all && key_press[key] == true) {
+	while (!input_stop_all && key_press[key] == true){
 		Input::keydown_pointer(key, 0, 0);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
-	Input::keyup_pointer(key, 0, 0);
 }
-void Input::persistSpc(unsigned char key) {
-	
+void Input::persistSpc(int key) {
 	while (!input_stop_all && spc_press[key] == true) {
 		Input::spcdown_pointer(key, 0, 0);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
-	Input::spcup_pointer(key, 0, 0);
 }
 
 
 void Input::keyDownReceiver(unsigned char key, int x, int y) {
 	//create thread
-	if(key_press.find(key) != key_press.end())
-		if (key_press[key] == true)
-			return;
-	if(key_threads.find(key) != key_threads.end())
-		if (key_threads[key].joinable())
-			key_threads[key].join();
-
-	key_press.insert_or_assign(key, true);
-	key_threads.insert_or_assign(key, std::thread(persistKey, key) );
+	if (key_press[key]) return;
+	key_press[key] = true;
+	if (key_threads[key].joinable()) return;
+	Input::keydown_pointer(key, 0, 0);
+	key_threads[key]= std::thread(persistKey, key);
 }
 
 void Input::keyUpReceiver(unsigned char key, int x, int y) {
 	key_press[key] = false;
+	Input::keyup_pointer(key, 0, 0);
+	if(key_threads[key].joinable())key_threads[key].join();
 }
 
 void Input::specialKeyDownReceiver(int key, int x, int y) {
 	//create thread
-	if (spc_press.find(key) != spc_press.end())
-		if (spc_press[key] == true)
-			return;
-	if (spc_threads.find(key) != spc_threads.end())
-		if (spc_threads[key].joinable())
-			spc_threads[key].join();
-
-	spc_press.insert_or_assign(key, true);
-	spc_threads.insert_or_assign(key, std::thread(persistSpc, key));
+	if (spc_press[key]) return;
+	spc_press[key] =true;
+	if (spc_threads[key].joinable()) return;
+	Input::spcdown_pointer(key, 0, 0);
+	spc_threads[key]=std::thread(persistSpc, key);
 }
 void Input::specialKeyUpReceiver(int key, int x, int y) {
 	spc_press[key] = false;
+	Input::spcup_pointer(key, 0, 0);
+	if(spc_threads[key].joinable())spc_threads[key].join();
 }
 
-void Input::keyUpCallback(void (*callback)(unsigned char, int, int)) { keydown_pointer = callback; }
-void Input::keyDownCallback(void (*callback)(unsigned char, int, int)) { keyup_pointer = callback; }
+void Input::keyUpCallback(void (*callback)(unsigned char, int, int)) { keyup_pointer = callback; }
+void Input::keyDownCallback(void (*callback)(unsigned char, int, int)) { keydown_pointer = callback; }
 void Input::specialKeyDownCallback(void (*callback)(int, int, int)) { spcdown_pointer = callback; }
 void Input::specialKeyUpCallback(void (*callback)(int, int, int)) { spcup_pointer = callback; }

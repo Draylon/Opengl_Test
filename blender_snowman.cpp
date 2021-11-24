@@ -14,9 +14,9 @@ static Texture texture;
 
 
 void load_snowman() {
-    std::ifstream ifile("ganyu.obj");
+    std::ifstream ifile("blender_snowman.obj");
     model = LoadOBJ(ifile);
-    texture = Texture("ganyu.png");
+    texture = Texture("blender_snowman.png");
 }
 
 void blender_snowman() {

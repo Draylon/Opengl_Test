@@ -14,7 +14,6 @@ Environment& Environment::getInstance() {
 void Environment::init(){
     //gluLookAt(0, 2, 5, 0, 0, 0, 0, 1, 0);
     Environment::enable_lighting();
-    glutSetCursor(GLUT_CURSOR_NONE);
 }
 
 void Environment::enable_lighting() {

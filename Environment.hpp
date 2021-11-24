@@ -10,6 +10,12 @@ private:
     static void enable_lighting();
     static void terrain();
 
+    //anotar pra fazer depois em uma classe separada
+    float specular;
+    float difuse;
+    float global;
+    float fog_depth;
+
 public:
     static Environment& getInstance();
     static void init();
