@@ -9,12 +9,12 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="GraphicsLibrary">
+      <UniqueIdentifier>{37764230-d42b-4965-a85e-9c2fcd452692}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Arquivos de Recurso">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="GraphicsLibrary">
-      <UniqueIdentifier>{37764230-d42b-4965-a85e-9c2fcd452692}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +37,18 @@
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
     <ClCompile Include="Environment.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSource.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="randomCube.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="Particles.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,22 +83,25 @@
     <ClInclude Include="castle.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.cpp">
-      <Filter>Arquivos de Origem</Filter>
-    </ClInclude>
     <ClInclude Include="Model.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClInclude>
     <ClInclude Include="ObjLoader.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClInclude>
-    <ClInclude Include="Particles.cpp">
-      <Filter>Arquivos de Origem</Filter>
-    </ClInclude>
     <ClInclude Include="Particles.hpp">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
     <ClInclude Include="Gambiarra.hpp">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSource.hpp">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.hpp">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.hpp">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
   </ItemGroup>

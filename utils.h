@@ -3,38 +3,72 @@
 
 #include<GL/freeglut.h>
 
-void create_rect(GLfloat w, GLfloat h, GLfloat d, GLfloat x, GLfloat y, GLfloat z) {
-    glPushMatrix();
-    glTranslatef(x, y, z);
-    // w = 3 | h = 1 | d = 2
+static GLfloat n[6][3] = {
+      {-1.0, 0.0, 0.0},
+      {0.0, 1.0, 0.0},
+      {1.0, 0.0, 0.0},
+      {0.0, -1.0, 0.0},
+      {0.0, 0.0, 1.0},
+      {0.0, 0.0, -1.0}
+};
+static GLint faces[6][4] = {
+  {0, 1, 2, 3},
+  {3, 2, 6, 7},
+  {7, 6, 5, 4},
+  {4, 5, 1, 0},
+  {5, 6, 2, 1},
+  {7, 4, 0, 3}
+};
 
-    glRectf(0, 0, w, h);
+static void
+drawBox(GLfloat size, GLenum type){
+    GLfloat v[8][3];
+    GLint i;
 
-    glRotatef(90, 1.0f, 0.0f, 0.0f);
-    glTranslatef(0.0f, -d, 0.0f);
+    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -size / 2;
+    v[4][0] = v[5][0] = v[6][0] = v[7][0] = size / 2;
+    v[0][1] = v[1][1] = v[4][1] = v[5][1] = -size / 2;
+    v[2][1] = v[3][1] = v[6][1] = v[7][1] = size / 2;
+    v[0][2] = v[3][2] = v[4][2] = v[7][2] = -size / 2;
+    v[1][2] = v[2][2] = v[5][2] = v[6][2] = size / 2;
 
-    glRectf(0, 0, w, d);
-
-    glRotatef(-90, 0.0f, 1.0f, 0.0f);
-    glTranslatef(-h, 0.0f, 0.0f);
-
-    glRectf(0, 0, h, d);
-
-    glRotatef(-90, 0.0f, 1.0f, 0.0f);
-    glTranslatef(-w, 0, 0);
-
-    glRectf(0.0, 0.0f, w, d);
-
-    glRotatef(-90, 0, 1, 0);
-    glTranslatef(-h, 0, 0);
-
-    glRectf(0.0, 0.0f, h, d);
-
-    glRotatef(90, 1, 0, 0);
-    glTranslatef(0, -w, 0);
-
-    glRectf(0.0, 0.0f, h, w);
-
-    glPopMatrix();
+    for (i = 5; i >= 0; i--) {
+        glBegin(type);
+        glNormal3fv(&n[i][0]);
+        glVertex3fv(&v[faces[i][0]][0]);
+        glVertex3fv(&v[faces[i][1]][0]);
+        glVertex3fv(&v[faces[i][2]][0]);
+        glVertex3fv(&v[faces[i][3]][0]);
+        glEnd();
+    }
 }
+
+void drawRect(GLfloat w, GLfloat h, GLfloat d, GLenum type=GL_QUADS) {
+    GLfloat v[8][3];
+    GLint i;
+
+    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -w / 2;
+    v[4][0] = v[5][0] = v[6][0] = v[7][0] = w / 2;
+    v[0][1] = v[1][1] = v[4][1] = v[5][1] = -h / 2;
+    v[2][1] = v[3][1] = v[6][1] = v[7][1] = h / 2;
+    v[0][2] = v[3][2] = v[4][2] = v[7][2] = -d / 2;
+    v[1][2] = v[2][2] = v[5][2] = v[6][2] = d / 2;
+
+    for (i = 5; i >= 0; i--) {
+        glBegin(type);
+        glNormal3fv(&n[i][0]);
+        glVertex3fv(&v[faces[i][0]][0]);
+        glVertex3fv(&v[faces[i][1]][0]);
+        glVertex3fv(&v[faces[i][2]][0]);
+        glVertex3fv(&v[faces[i][3]][0]);
+        glEnd();
+    }
+}
+
+void APIENTRY
+glutSolidCube(GLdouble size) {
+    drawBox(size, GL_QUADS);
+}
+
+
 #endif

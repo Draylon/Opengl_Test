@@ -6,12 +6,12 @@
 #include <cmath>
 
 
-GLfloat w = 25, h = 10, d = 2, gate_gap = 6;
-GLfloat tower_height = 20;
-GLfloat top_height = 12;
+GLfloat w = 30, h = 12, d = 2, gate_gap = 6;
+GLfloat tower_height = 25;
+GLfloat top_height = 15;
 GLfloat tower_diameter = sqrt(pow(d, 2) + pow(d, 2));
 
-void drawPillar(GLUquadricObj* pObj) {
+void drawPillar(GLUquadricObj* pObj){
     glPushMatrix();
     glTranslatef(0, 0, tower_height);
     glRotatef(180, 1, 0, 0);
@@ -27,20 +27,40 @@ void castle() {
     //glDisable(GL_CULL_FACE);
     glPushMatrix();
     
-    
-    create_rect(2*w,d,2*w,-w,-d,w);
-    
-    create_rect(2 * w, h, d, -w, 0, -w);
-    
-    glRotatef(90, 0, 1, 0);
-    create_rect(2 * w, h, d, -w, 0, -w);
-    glRotatef(90, 0, 1, 0);
+    glTranslatef(0, h / 2, 0);
+    glPushMatrix();
+    glTranslatef(0, -h/2-d/2, 0);
+    drawRect(2*w, d, 2*w);
+    glPopMatrix();
 
-    create_rect(w - gate_gap / 2, h, d, -w, 0, -w);
-    create_rect(w - gate_gap / 2, h, d, gate_gap / 2, 0, -w);
+    glPushMatrix();
+    glTranslatef(-w-d/2,0,0);
+    drawRect(d, h, 2*w);
+    glPopMatrix();
 
-    glRotatef(90, 0, 1, 0);
-    create_rect(2 * w, h, d, -w, 0, -w);
+    glPushMatrix();
+    glTranslatef(0, 0, -w-d/2);
+    drawRect(2*w, h, d);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(w+d/2, 0, 0);
+    drawRect(d, h, 2*w);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(-w/2-gate_gap/4, 0, w+d/2);
+    drawRect(w-gate_gap/2, h, d);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(w/2+gate_gap/4, 0, w+d/2);
+    drawRect(w-gate_gap/2, h, d);
+    glPopMatrix();
+
+    glPopMatrix();
+    //glRotatef(90, 0, 1, 0);
+    //create_rect(2 * w, h, d, -w, 0, -w);
 
     glPopMatrix();
     GLUquadricObj* pObj = gluNewQuadric();

@@ -5,8 +5,10 @@
 
 #include "Gambiarra.hpp"
 
-void snowman() {
+void snowman(){
+
     glPushMatrix();
+    
     GLUquadricObj* pObj;
     // Move object back and do in place rotation  
     //glTranslatef(0.0f, -1.0f, -3.0f);

@@ -176,7 +176,10 @@
     <ClCompile Include="Input.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
+    <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="randomCube.cpp" />
     <ClCompile Include="Renderer.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
@@ -191,9 +194,6 @@
     </ClCompile>
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="castle.cpp" />
-    <ClInclude Include="Entity.cpp">
-      <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
     <ClCompile Include="Environment.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
@@ -202,15 +202,18 @@
       <FileType>CppHeader</FileType>
     </ClInclude>
     <ClInclude Include="Input.hpp" />
+    <ClInclude Include="LightSource.hpp" />
     <ClInclude Include="Model.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
+    <ClInclude Include="Model.hpp" />
+    <ClInclude Include="Object.hpp" />
     <ClInclude Include="ObjLoader.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
-    <ClInclude Include="Particles.cpp">
+    <ClCompile Include="Particles.cpp">
       <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
+    </ClCompile>
     <ClInclude Include="Particles.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="snowman.cpp" />

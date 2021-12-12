@@ -21,22 +21,19 @@ static GLint sWidth=SCR_WIDTH,sHeight=SCR_HEIGHT,s2Width=sWidth/2,s2Height=sHeig
 
 
 
-
 //Controle do boneco de neve
 #include "Gambiarra.hpp"
+#include "Particles.hpp"
 
 
-Environment env = Environment::getInstance();
-Input ui_in = Input::getInstance();
-std::list<char> input_chars = { 'q', 'e', 'w', 's', 'a', 'd', ' ','t','g' };
-std::list<int> spc_chars = { GLUT_KEY_CTRL_L };
+Environment* env = Environment::getInstance();
+Input* ui_in = Input::getInstance();
 
-EulerCamera cam = EulerCamera(true,false,glm::vec3(0.0f, 0.0f, 3.0f));
-Renderer renderer = Renderer::getInstance();
+EulerCamera cam = EulerCamera(75,true,false,glm::vec3(0.0f, 0.0f, 3.0f));
+Renderer* renderer = Renderer::getInstance();
 
 void glMouseWheel(int button, int dir, int x, int y){
     cam.ProcessMouseScroll(dir);
-    glutPostRedisplay();
 }
 
 void glMouseClick(int button, int state, int x, int y) {
@@ -47,36 +44,39 @@ void glMouseClick(int button, int state, int x, int y) {
 void glMouse(int ox, int oy) {
     if (ox == SW2 && oy == SH2)return;
     cam.updatePerspective(ox-SW2, SH2-oy);
-    glutPostRedisplay();
     glutWarpPointer(SW2, SH2);
+    //glutPostRedisplay();
 }
 
-void glSpecialKeys(int key, int x, int y,bool down) {
+void glSpcDown(int key) {
     switch (key) {
-    case GLUT_KEY_CTRL_L:
-        cam.updatePosition(CameraMovement::DOWN);
-        break;
-    default:
-        break;
+        case GLUT_KEY_CTRL_L:
+            cam.updatePosition(CameraMovement::DOWN);
+            break;
+        case GLUT_KEY_SHIFT_L:
+            if(cam.MovementSpeed!=1.0f)
+                cam.MovementSpeed = 1.0f;
+            break;
+        default:break;
     }
-    glutPostRedisplay();
-}
-void glSpecialDown(int key, int x, int y) {
-    glSpecialKeys(key, x, y, true);
-}
-void glSpecialUp(int key, int x, int y) {
-    glSpecialKeys(key, x, y, false);
 }
 
-void glKeys(unsigned char key, int x, int y, bool down) {
+void glSpcUp(int key) {
+    switch (key) {
+    case GLUT_KEY_SHIFT_L:
+        cam.MovementSpeed = 0.1f;
+        break;
+    default:break;
+    }
+}
+
+void glKeyDown(unsigned char key) {
     switch (key) {
     case 'q':
-        if(down) cam.updateOrientation(2);
-        else cam.updateOrientation(0);
+        cam.updateOrientation(2);
         break;
     case 'e':
-        if(down)cam.updateOrientation(-2);
-        else cam.updateOrientation(0);
+        cam.updateOrientation(-2);
         break;
     case 'w':
         cam.updatePosition(CameraMovement::FORWARD);
@@ -93,52 +93,78 @@ void glKeys(unsigned char key, int x, int y, bool down) {
     case ' ':
         cam.updatePosition(CameraMovement::UP);
         break;
-    case 't':
+    case 'r':
         angulo_bracos += 2.0f;
         if (angulo_bracos >= 70.0f) angulo_bracos = 70.0f;
         break;
-    case 'g':
+    case 'f':
         angulo_bracos -= 2.0f;
         if (angulo_bracos <= -70.0f) angulo_bracos = -70.0f;
         break;
+    case 'g':
+        Environment::lightPos[0] -= 0.5f;
+        break;
+    case 'y':
+        Environment::lightPos[2] -= 0.5f;
+        break;
+    case 'h':
+        Environment::lightPos[2] += 0.5f;
+        break;
+    case 'j':
+        Environment::lightPos[0] += 0.5f;
+        break;
+    case 't':
+        Environment::lightPos[1] -= 0.5f;
+        break;
+    case 'u':
+        Environment::lightPos[1] += 0.5f;
+        break;
     default:break;
     }
-    glutPostRedisplay();
+    //glutPostRedisplay();
 }
 
-void glKeyDown(unsigned char key, int x, int y) {
-    glKeys(key, x, y, true);
-}
-void glKeyUp(unsigned char key, int x, int y) {
-    glKeys(key, x, y, false);
+void glKeyUp(unsigned char key){
+    switch (key) {
+    case 'q':
+        cam.updateOrientation(0);
+        break;
+    case 'e':
+        cam.updateOrientation(0);
+        break;
+    default:break;
+    }
+    //glutPostRedisplay();
 }
 
 
-void display() {
+void display(){
+    Renderer::frames++;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(75.0, GLfloat(sWidth) / GLfloat(sHeight), 1.0, 100.0);
+    gluPerspective(Renderer::getActiveCamera()->fov, GLfloat(sWidth) / GLfloat(sHeight), 1.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     cam.updateCameraLookAt();
-
+    Environment::repositionLights();
     glPushMatrix();
 
     Renderer::render_3D();
 
     glPopMatrix();
-    glFlush();
+    //glFlush();
 
-    glClear(GL_DEPTH_BUFFER_BIT);
+    //glClear(GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, SCR_WIDTH, 0, SCR_HEIGHT, 0, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glPopMatrix();
-    Renderer::render_HUD();
     glPushMatrix();
+    Renderer::render_HUD();
+    glPopMatrix();
+
     glFlush();
 }
 
@@ -152,25 +178,31 @@ void reshape(GLint w, GLint h){
     sHeight = h;
     s2Width = w / 2;
     s2Height = h / 2;
+    //glutPostRedisplay();
 }
 
 
 void init(){
     //glShadeModel(GL_FLAT);
     glShadeModel(GL_SMOOTH);
+
+    glEnable(GL_DEPTH_TEST);    // Hidden surface removal
+    glFrontFace(GL_CCW);        // Counter clock-wise polygons face out
+    glEnable(GL_CULL_FACE);     // Do not calculate inside
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
-    renderer.setActiveCamera(&cam);
+    renderer->setActiveCamera(&cam);
 }
 
 
 int main(int argc, char** argv){
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_ALPHA | GLUT_DEPTH);
 
     
-
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
     glutInitWindowPosition(glutGet(GLUT_SCREEN_WIDTH)/2-SW2, glutGet(GLUT_SCREEN_HEIGHT)/2-SH2);
     glutInitWindowSize(SCR_WIDTH, SCR_HEIGHT);
     glutCreateWindow("Big Yikes");
@@ -180,19 +212,30 @@ int main(int argc, char** argv){
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     }
 
-    Input::initKeys(input_chars);
-    Input::initSpcKeys(spc_chars);
+    DotParticle* snow_part = new DotParticle(1500, 500, 0.15f,35,
+        glm::vec3(1,1,1),0.003f, 0.15f,
+        glm::vec3(0,30,0),glm::vec3(0, -1, 0),
+        0, 0.1f, 0.8f);
+    snow_part->createParticleArray();
+
+    DotParticle* flame = new DotParticle(300, 30, 0.15f,0.2f,
+        glm::vec3(1,0.6,0.2),-0.00001f, 0.2f,
+        glm::vec3(5,0,-4),glm::vec3(0, 1, 0),
+        0, 0.08f, 0.8f);
+    flame->createParticleArray();
 
     Environment::init();
-    
+    Renderer::init(&sWidth, &sHeight);
+
     glutSetCursor(GLUT_CURSOR_NONE);
     glutWarpPointer(SW2, SH2);
-    
+
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
+    glutIdleFunc(display);
 
     // Bind dos Inputs de mouse
-    
+
     glutMotionFunc(glMouse);
     glutPassiveMotionFunc(glMouse);
 
@@ -201,16 +244,23 @@ int main(int argc, char** argv){
 
     // Bind de Teclado
 
-    glutSpecialFunc(Input::specialKeyDownReceiver);
-    glutSpecialUpFunc(Input::specialKeyUpReceiver);
+    glutSpecialFunc(Input::spcDownReceiver);
+    glutSpecialUpFunc(Input::spcUpReceiver);
     glutKeyboardFunc(Input::keyDownReceiver);
     glutKeyboardUpFunc(Input::keyUpReceiver);
 
-    Input::keyUpCallback(glKeyUp);
     Input::keyDownCallback(glKeyDown);
-    Input::specialKeyDownCallback(glSpecialDown);
-    Input::specialKeyUpCallback(glSpecialUp);
+    Input::keyUpCallback(glKeyUp);
+    Input::spcDownCallback(glSpcDown);
+    Input::spcUpCallback(glSpcUp);
 
     init();
     glutMainLoop();
+    //glutMainLoopEvent(); // uma iteração só
+
+    delete snow_part;
+    delete flame;
+    Input::Stop();
+    Environment::Stop();
+    Renderer::Stop();
 }

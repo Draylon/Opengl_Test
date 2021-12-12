@@ -1,86 +1,118 @@
 #include "Input.hpp"
 
-std::map<unsigned char, std::thread> Input::key_threads;
+unsigned int Input::pressed_keys;
+unsigned int Input::pressed_spc;
+std::thread Input::keys_thread;
 std::map<unsigned char, bool> Input::key_press;
-std::map<int, std::thread> Input::spc_threads;
-std::map<int, bool> Input::spc_press;
+std::map<unsigned char, bool> Input::spc_press;
+std::map<unsigned char, bool> Input::key_last;
+std::map<unsigned char, bool> Input::spc_last;
 
 Input* Input::instance;
 
-void (*Input::keydown_pointer)(unsigned char, int, int);
-void (*Input::keyup_pointer)(unsigned char, int, int);
-void (*Input::spcdown_pointer)(int, int, int);
-void (*Input::spcup_pointer)(int, int, int);
+void (*Input::keydown_pointer)(unsigned char);
+void (*Input::keyup_pointer)(unsigned char);
+void (*Input::spcdown_pointer)(int);
+void (*Input::spcup_pointer)(int);
 
 //======
 
-Input& Input::getInstance() {
+Input* Input::getInstance() {
 	input_stop_all = false;
 	if (!instance) {
+		pressed_keys = 0;
+		pressed_spc= 0;
 		instance = new Input();
 	}
-	return *instance;
+	return instance;
 }
 
-void Input::initKeys(std::list<char>charlist) {
+
+/*void Input::initKeys(std::list<int>charlist) {
 	for (char c : charlist) {
 		key_press[c] = false;
-		key_threads[c] = std::thread(persistKey,c);
-		key_threads[c].join();
+		key_last[c] = false;
 	}
-}
-void Input::initSpcKeys(std::list<int>charlist) {
-	for (char c : charlist) {
-		spc_press[c] = false;
-		spc_threads[c] = std::thread(persistSpc,c);
-		spc_threads[c].join();
+}*/
+
+
+void Input::persistKey(){
+	while (!input_stop_all) {
+		if (pressed_keys != 0){
+			for (std::pair<unsigned char, bool> e : key_press) {
+				//printf("K-%c -> %i\n", e.first, e.second);
+				if (e.second) {
+					if (key_last[e.first] == false) key_last[e.first] = true;
+					Input::keydown_pointer(e.first);
+				} else {
+					if (key_last[e.first] == true) {
+						pressed_keys--;
+						key_last[e.first] = false;
+						Input::keyup_pointer(e.first);
+					}
+				}
+			}
+		}
+		if (pressed_spc != 0){
+			for (std::pair<int, bool> e : spc_press) {
+				//printf("S-%u -> %i\n", e.first, e.second);
+				if (e.second) {
+					if (spc_last[e.first] == false) spc_last[e.first] = true;
+					Input::spcdown_pointer(e.first);
+				} else {
+					if (spc_last[e.first] == true) {
+						pressed_spc--;
+						spc_last[e.first] = false;
+						Input::spcup_pointer(e.first);
+					}
+				}
+			}
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(15));
 	}
 }
 
-void Input::persistKey(unsigned char key) {
-	while (!input_stop_all && key_press[key] == true){
-		Input::keydown_pointer(key, 0, 0);
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
-}
-void Input::persistSpc(int key) {
-	while (!input_stop_all && spc_press[key] == true) {
-		Input::spcdown_pointer(key, 0, 0);
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
-}
 
-
-void Input::keyDownReceiver(unsigned char key, int x, int y) {
+void Input::keyDownReceiver(unsigned char key, int, int){
+	if (spc_press[GLUT_KEY_CTRL_L]) key += 96;
+	else if (spc_press[GLUT_KEY_SHIFT_L]) 
+		if(key != 32) key += 32;
 	//create thread
+	//if (key_press.find(key) == key_press.end()) return;
 	if (key_press[key]) return;
 	key_press[key] = true;
-	if (key_threads[key].joinable()) return;
-	Input::keydown_pointer(key, 0, 0);
-	key_threads[key]= std::thread(persistKey, key);
+	key_last[key] = false;
+	pressed_keys++;
+	// else GLFW_REPEAT GLFW_UNKNOWN?
 }
-
-void Input::keyUpReceiver(unsigned char key, int x, int y) {
+void Input::keyUpReceiver(unsigned char key, int, int) {
+	if (spc_press[GLUT_KEY_CTRL_L]) key += 96;
+	else if (spc_press[GLUT_KEY_SHIFT_L])
+		if (key != 32) key += 32;
 	key_press[key] = false;
-	Input::keyup_pointer(key, 0, 0);
-	if(key_threads[key].joinable())key_threads[key].join();
 }
 
-void Input::specialKeyDownReceiver(int key, int x, int y) {
+void Input::spcDownReceiver(int key, int, int) {
 	//create thread
+	//if (key_press.find(key) == key_press.end()) return;
 	if (spc_press[key]) return;
-	spc_press[key] =true;
-	if (spc_threads[key].joinable()) return;
-	Input::spcdown_pointer(key, 0, 0);
-	spc_threads[key]=std::thread(persistSpc, key);
+	spc_press[key] = true;
+	spc_last[key] = false;
+	pressed_spc++;
+	// else GLFW_REPEAT GLFW_UNKNOWN?
 }
-void Input::specialKeyUpReceiver(int key, int x, int y) {
+void Input::spcUpReceiver(int key, int, int) {
 	spc_press[key] = false;
-	Input::spcup_pointer(key, 0, 0);
-	if(spc_threads[key].joinable())spc_threads[key].join();
 }
 
-void Input::keyUpCallback(void (*callback)(unsigned char, int, int)) { keyup_pointer = callback; }
-void Input::keyDownCallback(void (*callback)(unsigned char, int, int)) { keydown_pointer = callback; }
-void Input::specialKeyDownCallback(void (*callback)(int, int, int)) { spcdown_pointer = callback; }
-void Input::specialKeyUpCallback(void (*callback)(int, int, int)) { spcup_pointer = callback; }
+
+void Input::keyDownCallback(void (*callback)(unsigned char)) { keydown_pointer= callback; }
+void Input::keyUpCallback(void (*callback)(unsigned char)) { keyup_pointer= callback; }
+void Input::spcDownCallback(void (*callback)(int)) { spcdown_pointer= callback; }
+void Input::spcUpCallback(void (*callback)(int)) { spcup_pointer= callback; }
+
+
+void Input::Stop() {
+	delete instance;
+}
+

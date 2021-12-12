@@ -114,10 +114,12 @@ void EulerCamera::EulerLocked(){
 }
 
 void EulerCamera::EulerFull(){
-    
-    viewMatrix = glm::rotate(viewMatrix, glm::radians(Yaw), glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
-    viewMatrix = glm::rotate(viewMatrix, glm::radians(Pitch), glm::vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));
-    viewMatrix = glm::rotate(viewMatrix, glm::radians(Roll), glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]));
+    if(Yaw!=0)
+        viewMatrix = glm::rotate(viewMatrix, glm::radians(Yaw), glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
+    if(Pitch!=0)
+        viewMatrix = glm::rotate(viewMatrix, glm::radians(Pitch), glm::vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));
+    if(Roll!=0)
+        viewMatrix = glm::rotate(viewMatrix, glm::radians(Roll), glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]));
 
     /*
     viewMatrix = glm::rotate(viewMatrix, glm::radians(Yaw), glm::vec3(0,1,0));

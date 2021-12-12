@@ -1,13 +1,6 @@
 #ifndef OBJ_LOADER
 #define OBJ_LOADER
 
-#include <vector>
-#include <string>
-#include <cstdio>
-#include <fstream>
-#include <sstream>
-#include <glm/glm.hpp>
-
 /*
 
 //headers
@@ -101,7 +94,7 @@ int main(int argc, char** argv){
     return 0;
 }*/
 
-
+/*
 struct Vertex{
     glm::vec3 position;
     glm::vec2 texcoord;
@@ -189,4 +182,5 @@ std::vector< Vertex > LoadOBJ(std::istream& in){
     return verts;
 }
 
+*/
 #endif
