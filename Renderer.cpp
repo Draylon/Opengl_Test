@@ -69,7 +69,7 @@ void Renderer::init(GLint* w,GLint* h){
 unsigned char* draw_fps_str = (unsigned char*)malloc(27 * sizeof(char));
 void Renderer::render_HUD(){
     
-    //draw FPS
+    //draw camera angles
     /*if (draw_angles_str != NULL) {
         glColor3f(2, 2, 2);
         glRasterPos2d(5, 5);
@@ -78,6 +78,7 @@ void Renderer::render_HUD(){
         sprintf_s((char*)draw_angles_str, 27 * sizeof(char), "Y:%.2f P:%.2f R:%.2f", yaw, pitch, roll);
         glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, draw_angles_str);
     }*/
+    //draw FPS
     if (draw_fps_str != NULL) {
         glDisable(GL_LIGHTING);
         glColor3f(1, 1, 1);
@@ -98,7 +99,7 @@ void Renderer::render_3D(){
 
     //Model::render_all();
     glDisable(GL_LIGHTING);
-    DotParticle::render_all();
+    DirectedParticle::render_all();
     glEnable(GL_LIGHTING);
     glPushMatrix();
     snowman();

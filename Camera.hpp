@@ -12,7 +12,7 @@ enum CameraMovement {
     UP,DOWN
 };
 
-const float YAW = -90.0f;
+const float YAW = 180.0f;
 const float PITCH = 0.0f;
 const float ROLL= 0.0f;
 const float SPEED = 0.1f;//2.5f

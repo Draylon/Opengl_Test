@@ -29,8 +29,13 @@ static GLint sWidth=SCR_WIDTH,sHeight=SCR_HEIGHT,s2Width=sWidth/2,s2Height=sHeig
 Environment* env = Environment::getInstance();
 Input* ui_in = Input::getInstance();
 
-EulerCamera cam = EulerCamera(75,true,false,glm::vec3(0.0f, 0.0f, 3.0f));
+EulerCamera cam = EulerCamera(75,true,false,glm::vec3(0.0f, 8.0f, 30.0f));
 Renderer* renderer = Renderer::getInstance();
+
+DirectedParticle* flame = new DirectedParticle(true,400, 40, 0.15f, 0.2f,
+    glm::vec3(1, 0.6, 0.2), -0.004f, 0.004f,
+    glm::vec3(5, 0, -4), glm::vec3(0, 1, 0),
+    0.005f,20, 0, 0.8f);
 
 void glMouseWheel(int button, int dir, int x, int y){
     cam.ProcessMouseScroll(dir);
@@ -118,6 +123,13 @@ void glKeyDown(unsigned char key) {
         break;
     case 'u':
         Environment::lightPos[1] += 0.5f;
+        break;
+    case 'z':
+        flame->swirl_cycle++;
+        break;
+    case 'x':
+        if(flame->swirl_cycle>1)
+            flame->swirl_cycle--;
         break;
     default:break;
     }
@@ -212,17 +224,42 @@ int main(int argc, char** argv){
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     }
 
-    DotParticle* snow_part = new DotParticle(1500, 500, 0.15f,35,
-        glm::vec3(1,1,1),0.003f, 0.15f,
-        glm::vec3(0,30,0),glm::vec3(0, -1, 0),
-        0, 0.1f, 0.8f);
-    snow_part->createParticleArray();
+    glm::vec3 gravity = glm::vec3(0, -1, 0);
 
-    DotParticle* flame = new DotParticle(300, 30, 0.15f,0.2f,
-        glm::vec3(1,0.6,0.2),-0.00001f, 0.2f,
-        glm::vec3(5,0,-4),glm::vec3(0, 1, 0),
-        0, 0.08f, 0.8f);
-    flame->createParticleArray();
+    DirectedParticle* snow_part = new DirectedParticle(true,2000, 400, 0.15f,35,
+        glm::vec3(1,1,1),0.002f, 0.5f,
+        glm::vec3(0,60,0),glm::vec3(0, -1, 0),
+        0,0, 0.5f, 0.8f);
+    snow_part->gravity = &gravity;
+    //snow_part->animate();
+    
+    flame->gravity = &gravity;
+    //flame->animate();
+
+    DotParticle* firework_explosion = new DotParticle(false,400, 40, 0,
+        glm::vec3(1, 0, 1), 0.02f, 0.45f,glm::vec3(0, 0, 0),
+        0, 0, 0.5f, 0.8f);
+    firework_explosion->gravity = &gravity;
+    
+    DotParticle* firework_trail = new DotParticle(true,30, 15,0,
+        glm::vec3(1, 1, 0), 0.005f, 0.75f,glm::vec3(0, 0, 0),
+        0, 0, 0.2f, 0.8f);
+    firework_trail->gravity = &gravity;
+
+    /*DirectedParticle* firework = new DirectedParticle(2000, 400, 0.15f, 35,
+        glm::vec3(1, 1, 1), 0.002f, 0.5f,
+        glm::vec3(0, 60, 0), glm::vec3(0, -1, 0),
+        0, 0, 0.5f, 0.8f);*/
+
+    Firework* firework_emitter = new Firework(firework_trail,firework_explosion,
+        true,9,80,15,2.0f,glm::vec3(0,0,0),
+        glm::vec3(0,1,0));
+    firework_emitter->gravity = &gravity;
+    firework_emitter->animate();
+
+    //firework_trail->animate();
+    //firework_explosion->animate();
+
 
     Environment::init();
     Renderer::init(&sWidth, &sHeight);
@@ -256,10 +293,14 @@ int main(int argc, char** argv){
 
     init();
     glutMainLoop();
-    //glutMainLoopEvent(); // uma iteração só
+    //for(int iii=0;iii < 10;iii++) glutMainLoopEvent(); // uma iteração só
 
+    //delete fireworks;
     delete snow_part;
     delete flame;
+    delete firework_trail;
+    delete firework_explosion;
+    delete firework_emitter;
     Input::Stop();
     Environment::Stop();
     Renderer::Stop();
