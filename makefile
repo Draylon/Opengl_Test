@@ -1,0 +1,1 @@
+main: g++ main.cpp -lLibraries/include -lglew -lglut -lGL -lGLU -lm -o main.o

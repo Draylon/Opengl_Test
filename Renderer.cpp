@@ -2,16 +2,20 @@
 
 #include "snowman.cpp"
 #include "castle.cpp"
-#include "randomCube.cpp"
+//#include "randomCube.cpp"
 #include "Particles.hpp"
+#include "Material.hpp"
+#include "Boid.hpp"
 
 #define SCR_WIDTH 1580
 #define SCR_HEIGHT 1020
 #define SW2 SCR_WIDTH/2
 #define SH2 SCR_HEIGHT/2
 
+//Material* Renderer::singular_material;
+
 Renderer* Renderer::instance;
-EulerCamera* Renderer::activeCamera;
+Camera* Renderer::activeCamera;
 GLint* Renderer::width;
 GLint* Renderer::height;
 
@@ -44,20 +48,30 @@ void Renderer::init(GLint* w,GLint* h){
     Renderer::height = h;
     //glShadeModel(GL_FLAT);
     glShadeModel(GL_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
+    //glEnable(GL_POINT_SMOOTH);
 
-    //glClearDepth(1.0);				// Enables Clearing Of The Depth Buffer
-    //glDepthFunc(GL_LESS);				// The Type Of Depth Test To Do
+    //singular_material->setMaterial();
 
-    GLfloat mat_ambient[] = { 0.3,0.3,0.3,1.0 };
-    GLfloat mat_diffuse[] = { 0.1,0.1,0.7,1.0 };
-    GLfloat mat_specular[] = { 0.7,0.1,0.1,1.0 };
-    GLfloat mat_shininess[] = { 1.0 };
+    glClearDepth(1.0);				// Enables Clearing Of The Depth Buffer
+    glDepthFunc(GL_LESS);				// The Type Of Depth Test To Do
 
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    //GLfloat mat_ambient[] = { 0.24725f, 0.0745f,0.1995f,1.0 };
+    //GLfloat mat_diffuse[] = { 0.75164f, 0.22648f,0.60648f,1.0 };
+    //GLfloat mat_specular[] = { 0.228281f, 0.366065f,0.555802f,1.0 };
+    
+    //GLfloat mat_ambient[] = { 0.7f, 0.0f, 0.0f, 1.0f };
+    //GLfloat mat_diffuse[] = { 0.0f, 0.4f, 0.0f, 1.0f };
+    //GLfloat mat_specular[] = { 0.0f, 0.0f, 0.2f, 1.0f };
+    
+    //GLfloat mat_shininess[] = { 90.0 };
+
+    //glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    
+    //glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diffuse);
+    
+    //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
     //Model::init_all();
 }
@@ -84,7 +98,6 @@ void Renderer::render_HUD(){
         glColor3f(1, 1, 1);
         glRasterPos2d(5, 700);
         float yaw, pitch, roll;
-        activeCamera->drawAngles(&yaw, &pitch, &roll);
         sprintf_s((char*)draw_fps_str, 27 * sizeof(char), "%u fps", Renderer::fps);
         glutBitmapString(GLUT_BITMAP_HELVETICA_18, draw_fps_str);
         glEnable(GL_LIGHTING);
@@ -97,22 +110,17 @@ void Renderer::render_3D(){
     glRotatef(yRot, 0.0f, 1.0f, 0.0f);
     glRotatef(zRot, 0.0f, 0.0f, 1.0f);*/
 
-    //Model::render_all();
     glDisable(GL_LIGHTING);
     DirectedParticle::render_all();
+    Boid::render_all();
     glEnable(GL_LIGHTING);
-    glPushMatrix();
-    snowman();
-    glColor3f(0.4f, 0.2f, 0.6f);
-    castle();
-    glTranslatef(6, 2, 0);
-    glColor3f(1, 0, 0);
-    drawBox(2, GL_QUADS);
-    glTranslatef(0, 1.80f, 0);
-    glutSolidTeapot(1);
-    glPopMatrix();
-    //blender_snowman();
+    
 
+    Entity::render_all();
+    //Model::render_all();
+    
+    //snowman();
+    //blender_snowman();
 
     //draw_arm(shoulderAngle);
     //glTranslatef(0.0, 0.0, 0.0);
@@ -131,10 +139,10 @@ void Renderer::render_3D(){
 
 // NÃO TÁ SENDO USADO
 void Renderer::reshape() {
-    glViewport(0, 0, w, h);
+    //glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(75.0, GLfloat(w) / GLfloat(h), 1.0, 100.0);
+    //gluPerspective(75.0, GLfloat(w) / GLfloat(h), 1.0, 100.0);
     //Renderer::height = h;
     //Renderer::width= w;
 }

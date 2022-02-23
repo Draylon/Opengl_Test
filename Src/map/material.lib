@@ -1,0 +1,310 @@
+# Aspose.3D Wavefront OBJ Exporter
+# Copyright 2004-2022 Aspose Pty Ltd.
+# File created: 02/21/2022 04:54:34
+
+newmtl material_0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_0_baseColor.png
+newmtl material_10
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_10_baseColor.png
+newmtl material_11
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_11_baseColor.png
+newmtl material_12
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_12_baseColor.png
+newmtl material_13
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_13_baseColor.png
+newmtl material_14
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_14_baseColor.png
+newmtl material_15
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_15_baseColor.png
+newmtl material_16
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_16_baseColor.png
+newmtl material_17
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_17_baseColor.png
+newmtl material_18
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_18_baseColor.png
+newmtl material_19
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_19_baseColor.png
+newmtl material_20
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_20_baseColor.png
+newmtl material_22
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_22_baseColor.png
+newmtl material_23
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_23_baseColor.png
+newmtl material_24
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_24_baseColor.png
+newmtl material_25
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_25_baseColor.png
+newmtl material_26
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_26_baseColor.png
+newmtl material_27
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_27_baseColor.png
+newmtl material_28
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_28_baseColor.png
+newmtl material_29
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_29_baseColor.png
+newmtl material_3
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_3_baseColor.png
+newmtl material_30
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_30_baseColor.png
+newmtl material_4
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_4_baseColor.png
+newmtl material_5
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_5_baseColor.png
+newmtl material_6
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_6_baseColor.png
+newmtl material_7
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_7_baseColor.png
+newmtl material_8
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_8_baseColor.png
+newmtl material_1
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_1_baseColor.png
+newmtl material_2
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_2_baseColor.png
+newmtl material_21
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_21_baseColor.png
+newmtl material_31
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_31_baseColor.png
+newmtl material_32
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_32_baseColor.png
+newmtl material_33
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_33_baseColor.png
+newmtl material_9
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+d 1
+Tr 0
+illum 2
+Ks 0.2 0.2 0.2
+Ns 20
+map_Kd material_9_baseColor.png

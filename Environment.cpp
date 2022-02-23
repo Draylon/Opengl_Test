@@ -1,8 +1,15 @@
+/*
 #include "Environment.hpp"
 
 Environment* Environment::instance;
-GLfloat Environment::lightPos[4];
-GLfloat Environment::lightDir[3];
+
+std::vector<Entity*> Environment::entity_list;
+std::vector<GenericLight*> Environment::light_list;
+std::vector<Physics*> Environment::physics_actuators;
+std::vector<GenericParticle*> Environment::particle_list;
+
+int Environment::elc, Environment::llc,
+Environment::pha, Environment::plc;
 
 Environment* Environment::getInstance() {
     if (!Environment::instance) {
@@ -17,14 +24,32 @@ void Environment::Stop() {
 
 void Environment::init(){
     //gluLookAt(0, 2, 5, 0, 0, 0, 0, 1, 0);
-    Environment::enable_lighting();
+    //Environment::enable_lighting();
 }
 
-void Environment::repositionLights() {
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-    //LightSource::repositionLights(GL_LIGHT0);
-    //glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDir);
+void Environment::addLighting(GenericLight* l) {
+    light_list.push_back(l);
+    llc++;
 }
+
+void Environment::addEntity(Entity* e) {
+    entity_list.push_back(e);
+    elc++;
+}
+
+void Environment::setPhysics(Physics* p) {
+    physics_actuators.push_back(p);
+    pha++;
+}
+
+void Environment::addParticle(GenericParticle* p) {
+    particle_list.push_back(p);
+    plc++;
+}
+
+*/
+
+/*
 
 void Environment::enable_lighting(){
         // Light values and coordinates
@@ -71,3 +96,5 @@ void Environment::enable_lighting(){
 void Environment::terrain() {
 
 }
+*/ 
+

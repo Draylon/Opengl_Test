@@ -2,10 +2,13 @@
 
 #include <GL/glut.h>
 #include <glm/gtx/euler_angles.hpp>
+#include <iostream>
 
 /*glm::mat4 Camera::GetViewMatrix(){
     return glm::lookAt(Position, Position + Front, Up);
 }*/
+
+std::vector<Camera*> Camera::cam_list;
 
 void Camera::ProcessMouseScroll(float yoffset) {
     Zoom -= (float)yoffset;
@@ -13,71 +16,35 @@ void Camera::ProcessMouseScroll(float yoffset) {
     if (Zoom > 45.0f) Zoom = 45.0f;
 }
 
-void Camera::updateCameraLookAt() {
-    gluLookAt(Position[0], Position[1], Position[2], (Position[0] + Front[0]), (Position[1] + Front[1]), (Position[2] + Front[2]), Up[0], Up[1], Up[2]);
+void Camera::updateCameraLookAt(){
+    gluLookAt(Position[0],Position[1], Position[2], (Position[0] + Front[0]), (Position[1] + Front[1]), (Position[2] + Front[2]), Up[0], Up[1], Up[2]);
 }
 
-void Camera::updatePosition(CameraMovement direction){
-    switch (direction) {
-    case FORWARD: Position += Front * MovementSpeed;  break;
+void Camera::updateOrientation(float roll){
+    Roll += roll;
+    if (roll > 180.0f) roll = -180.0f;
+    if (roll < -180.0f) roll = 180.0f;
+}
+
+void Camera::staticUpdatePosition() {
+    //nothing?
+    Position = *(objectPosition->getPositionVec()) - Front;//this->max_distance;
+}
+
+void Camera::updatePosition(MovementDirection direction){
+    switch (direction){
+    case FORWARD:  Position += Front * MovementSpeed;  break;
     case BACKWARD: Position -= Front * MovementSpeed; break;
-    case LEFT: Position -= Right * MovementSpeed;     break;
-    case RIGHT: Position += Right * MovementSpeed;    break;
-    case UP: Position += Up * MovementSpeed;          break;
-    case DOWN: Position -= Up * MovementSpeed;        break;
+    case LEFT:     Position -= Right * MovementSpeed;     break;
+    case RIGHT:    Position += Right * MovementSpeed;    break;
+    case UP:       Position += Up * MovementSpeed;          break;
+    case DOWN:     Position -= Up * MovementSpeed;        break;
     default:break;
     }
 }
 
-//=======================================
-//=======================================
-//=======================================
-
-void EulerCamera::updateOrientation(float roll) {
-    if (roll != 0){
-        roll *= MouseSensitivity;
-        if (boundVertical){
-            Roll += roll;
-            if (roll > 180.0f) roll = -180.0f;
-            if (roll < -180.0f) roll = 180.0f;
-        }else{
-            Roll = roll;
-        }
-    }else{
-        Roll = 0;
-    }
-    RollC += Roll;
-    if (RollC > 360.0f)RollC -= 360.0f;
-    if (RollC < 0.0f)RollC += 360.0f;
-    (this->*updateCameraVectors)();
-}
-
-void EulerCamera::updatePerspective(float xoffset, float yoffset){
-    xoffset *= MouseSensitivity;
-    yoffset *= MouseSensitivity;
-    if (boundVertical) {
-        Yaw += xoffset, Pitch += yoffset;
-        if (!allowUpsideDown) {
-            if (Pitch > 89.0f) Pitch = 89.0;
-            if (Pitch < -89.0f) Pitch = -89.0;
-        }
-
-        if (Yaw > 180.0f) Yaw = -180.0f;
-        if (Yaw < -180.0f) Yaw = 180.0f;
-        if (Pitch > 180.0f) Pitch = -180.0f;
-        if (Pitch < -180.0f) Pitch = 180.0f;
-    }else{
-        Yaw = xoffset, Pitch = yoffset;
-    }
-    YawC += Yaw; PitchC += Pitch;
-    if (YawC > 360.0f) YawC -= 360.0f;
-    if (YawC < 0.0f) YawC += 360.0f;
-    if (PitchC> 360.0f) PitchC-= 360.0f;
-    if (PitchC < 0.0f) PitchC+= 360.0f;
-    (this->*updateCameraVectors)();
-}
-
-void EulerCamera::worldUpEuler(){
+//WorldUpEuler
+void Camera::updateCameraVectors() {
     glm::vec3 front;
 
     front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
@@ -89,31 +56,71 @@ void EulerCamera::worldUpEuler(){
     Up = glm::normalize(glm::cross(Right, Front));
 }
 
+void Camera::updatePerspective(float xoff,float yoff) {
+    xoff *= MouseSensitivity;
+    yoff *= MouseSensitivity;
+    Yaw += xoff, Pitch += yoff;
+    if (!allowUpsideDown) {
+        if (Pitch > 89.8f) Pitch = 89.8f;
+        if (Pitch < -89.8f) Pitch = -89.8f;
+    }
+
+    if (Yaw > 180.0f) Yaw = -180.0f;
+    if (Yaw < -180.0f) Yaw = 180.0f;
+    if (Pitch > 180.0f) Pitch = -180.0f;
+    if (Pitch < -180.0f) Pitch = 180.0f;
+    this->updateCameraVectors();
+}
+
+//=======================================
+//=======================================
+//=======================================
+
+void EulerCamera::updateOrientation(float roll) {
+    if (roll != 0){
+        roll *= MouseSensitivity;
+        Roll = roll;
+    }else{
+        Roll = 0;
+    }
+    this->updateCameraVectors();
+}
+
+void EulerCamera::updatePerspective(float xoffset, float yoffset){
+    xoffset *= MouseSensitivity;
+    yoffset *= MouseSensitivity;
+    Yaw = xoffset, Pitch = yoffset;
+    this->updateCameraVectors();
+}
+
+/*
 void EulerCamera::EulerLocked(){
-    glm::vec3 a,b,c;
-    
-    float cosY = cosf(glm::radians(Yaw)),sinY = sinf(glm::radians(Yaw)),
-          cosP = cosf(glm::radians(Pitch)),sinP = sinf(glm::radians(Pitch)),
-          cosR = cosf(glm::radians(Roll)),sinR = sinf(glm::radians(Roll));
+    glm::vec3 a, b, c;
+
+    float cosY = cosf(glm::radians(Yaw)), sinY = sinf(glm::radians(Yaw)),
+        cosP = cosf(glm::radians(Pitch)), sinP = sinf(glm::radians(Pitch)),
+        cosR = cosf(glm::radians(Roll)), sinR = sinf(glm::radians(Roll));
 
     a.x = cosY * cosR + sinY * sinP * sinR;
     a.y = cosR * sinY * sinP - sinR * cosY;
     a.z = cosP * sinY;
 
-    b.x    = cosP * sinR;
-    b.y    = cosR * cosP;
-    b.z    = -sinP;
+    b.x = cosP * sinR;
+    b.y = cosR * cosP;
+    b.z = -sinP;
 
     c.x = sinR * cosY * sinP - sinY * cosR;
     c.y = sinY * sinR + cosR * cosY * sinP;
     c.z = cosP * cosY;
-    
+
     Front = glm::normalize(a);
     Right = glm::normalize(c);
-    Up    = glm::normalize(b);
+    Up = glm::normalize(b);
 }
+*/
 
-void EulerCamera::EulerFull(){
+
+void EulerCamera::updateCameraVectors(){
     if(Yaw!=0)
         viewMatrix = glm::rotate(viewMatrix, glm::radians(Yaw), glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
     if(Pitch!=0)
@@ -151,11 +158,65 @@ void EulerCamera::EulerFull(){
     Right= glm::normalize(-glm::vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));
 }
 
-void EulerCamera::drawAngles(float* yaw, float* pitch, float* roll) {
-    *yaw = YawC;
-    *pitch = PitchC;
-    *roll = RollC;
+
+
+//=======================================================
+//=======================================================
+//=======================================================
+//=======================================================
+
+void OrbitCamera::ProcessMouseScroll(float scroll) {
+    this->max_distance += scroll;
+    if (max_distance < min_distance) max_distance = min_distance;
 }
+
+void OrbitCamera::staticUpdatePosition() {
+    Position = *(objectPosition->getPositionVec()) - Front * this->max_distance;
+}
+
+void OrbitCamera::updatePosition(MovementDirection m) {
+    // ?
+    //printf("não chamar isso\nposition = entity->movement->Position");
+
+    //objectPosition - distancia do objeto
+    //objectPosition - Front?
+    //ObjectMovement != trigger CameraMovement
+}
+
+void OrbitCamera::updatePerspective(float xoffset, float yoffset) {
+    xoffset *= MouseSensitivity;
+    yoffset *= MouseSensitivity;
+    Yaw = xoffset, Pitch = yoffset;
+    this->updateCameraVectors();
+    this->staticUpdatePosition();
+}
+
+void OrbitCamera::updateOrientation(float roll) {
+    if (roll != 0) {
+        roll *= MouseSensitivity;
+        Roll = roll;
+    }else {
+        Roll = 0;
+    }
+    this->updateCameraVectors();
+    this->staticUpdatePosition();
+}
+
+void OrbitCamera::updateCameraVectors(){
+    if (Yaw != 0)
+        viewMatrix = glm::rotate(viewMatrix, glm::radians(Yaw), glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
+    if (Pitch != 0)
+        viewMatrix = glm::rotate(viewMatrix, glm::radians(Pitch), glm::vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));
+    if (Roll != 0)
+        viewMatrix = glm::rotate(viewMatrix, glm::radians(Roll), glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]));
+
+    viewMatrix = glm::translate(viewMatrix, Position);
+
+    Front = glm::normalize(glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]));
+    Up = glm::normalize(glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
+    Right = glm::normalize(-glm::vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));
+}
+
 
 
 //=======================================================

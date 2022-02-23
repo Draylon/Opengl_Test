@@ -2,43 +2,34 @@
 #include <GL/glut.h>
 #include <GL/freeglut_ext.h>
 
+#include "ScreenConstraints.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
 #include "Input.hpp"
-#include "Environment.hpp"
-#include "Camera.hpp"
 
 #include "Renderer.hpp"
-
-
-#define SCR_WIDTH 1280
-#define SCR_HEIGHT 720
-#define SW2 SCR_WIDTH/2
-#define SH2 SCR_HEIGHT/2
-
-static GLint sWidth=SCR_WIDTH,sHeight=SCR_HEIGHT,s2Width=sWidth/2,s2Height=sHeight/2;
-
-
-
-//Controle do boneco de neve
-#include "Gambiarra.hpp"
+#include "LightSource.hpp"
+#include "Boid.hpp"
 #include "Particles.hpp"
 
+#include "Aimlab.hpp"
 
-Environment* env = Environment::getInstance();
-Input* ui_in = Input::getInstance();
+//GenericLight* light0;
 
-EulerCamera cam = EulerCamera(75,true,false,glm::vec3(0.0f, 8.0f, 30.0f));
-Renderer* renderer = Renderer::getInstance();
 
-DirectedParticle* flame = new DirectedParticle(true,400, 40, 0.15f, 0.2f,
-    glm::vec3(1, 0.6, 0.2), -0.004f, 0.004f,
-    glm::vec3(5, 0, -4), glm::vec3(0, 1, 0),
-    0.005f,20, 0, 0.8f);
+//==========================
 
+//Environment* env = Environment::getInstance();
+Input* inputController = Input::getInstance();
+
+Renderer* rendererController = Renderer::getInstance();
+
+
+/*
 void glMouseWheel(int button, int dir, int x, int y){
-    cam.ProcessMouseScroll(dir);
+    cam->ProcessMouseScroll(dir);
 }
 
 void glMouseClick(int button, int state, int x, int y) {
@@ -47,20 +38,26 @@ void glMouseClick(int button, int state, int x, int y) {
 
 
 void glMouse(int ox, int oy) {
+    //printf("%d , %d \n", ox, oy);
     if (ox == SW2 && oy == SH2)return;
-    cam.updatePerspective(ox-SW2, SH2-oy);
+    ox -= SW2;
+    oy -= SH2;
+    //box_position->updateOrientation(-ox,-oy);
+    cam->updatePerspective(ox,-oy);
+    
     glutWarpPointer(SW2, SH2);
     //glutPostRedisplay();
 }
 
-void glSpcDown(int key) {
+void glSpcDown(int key){
     switch (key) {
         case GLUT_KEY_CTRL_L:
-            cam.updatePosition(CameraMovement::DOWN);
+            cam->updatePosition(MovementDirection::DOWN);
+            //box_position->updatePosition(MovementDirection::DOWN);
             break;
         case GLUT_KEY_SHIFT_L:
-            if(cam.MovementSpeed!=1.0f)
-                cam.MovementSpeed = 1.0f;
+            if(cam->MovementSpeed!=1.0f)
+                cam->MovementSpeed = 1.0f;
             break;
         default:break;
     }
@@ -69,7 +66,7 @@ void glSpcDown(int key) {
 void glSpcUp(int key) {
     switch (key) {
     case GLUT_KEY_SHIFT_L:
-        cam.MovementSpeed = 0.1f;
+        cam->MovementSpeed = 0.1f;
         break;
     default:break;
     }
@@ -77,59 +74,94 @@ void glSpcUp(int key) {
 
 void glKeyDown(unsigned char key) {
     switch (key) {
+    case 'k':
+        boid_position->updatePosition(MovementDirection::LEFT);
+        break;
+    case 'o':
+        boid_position->updatePosition(MovementDirection::FORWARD);
+        break;
+    case 'l':
+        boid_position->updatePosition(MovementDirection::BACKWARD);
+        break;
+    case ';':
+        boid_position->updatePosition(MovementDirection::RIGHT);
+        break;
+    case 'i':
+        boid_position->updatePosition(MovementDirection::UP);
+        break;
+    case 'p':
+        boid_position->updatePosition(MovementDirection::DOWN);
+        break;
+    case ',':
+        ganyu_move->updateOrientation(8, 0);
+        break;
+    case '.':
+        ganyu_move->updateOrientation(-8, 0);
+        break;
     case 'q':
-        cam.updateOrientation(2);
+        //box_position->updateOrientation(2);
+        cam->updateOrientation(2);
         break;
     case 'e':
-        cam.updateOrientation(-2);
+        //box_position->updateOrientation(-2);
+        cam->updateOrientation(-2);
         break;
     case 'w':
-        cam.updatePosition(CameraMovement::FORWARD);
+        cam->updatePosition(MovementDirection::FORWARD);
+        //box_position->updatePosition(MovementDirection::FORWARD);
         break;
     case 's':
-        cam.updatePosition(CameraMovement::BACKWARD);
+        cam->updatePosition(MovementDirection::BACKWARD);
+        //box_position->updatePosition(MovementDirection::BACKWARD);
         break;
     case 'a':
-        cam.updatePosition(CameraMovement::LEFT);
+        cam->updatePosition(MovementDirection::LEFT);
+        //box_position->updatePosition(MovementDirection::LEFT);
+        //box_position->updateOrientation(-15,0);
         break;
     case 'd':
-        cam.updatePosition(CameraMovement::RIGHT);
+        cam->updatePosition(MovementDirection::RIGHT);
+        //box_position->updatePosition(MovementDirection::RIGHT);
+        //box_position->updateOrientation(15,0);
         break;
     case ' ':
-        cam.updatePosition(CameraMovement::UP);
-        break;
-    case 'r':
-        angulo_bracos += 2.0f;
-        if (angulo_bracos >= 70.0f) angulo_bracos = 70.0f;
-        break;
-    case 'f':
-        angulo_bracos -= 2.0f;
-        if (angulo_bracos <= -70.0f) angulo_bracos = -70.0f;
+        cam->updatePosition(MovementDirection::UP);
+        //box_position->updatePosition(MovementDirection::UP);
         break;
     case 'g':
-        Environment::lightPos[0] -= 0.5f;
+        light0->light_position[0] -= 0.5f;
         break;
     case 'y':
-        Environment::lightPos[2] -= 0.5f;
+        light0->light_position[2] -= 0.5f;
         break;
     case 'h':
-        Environment::lightPos[2] += 0.5f;
+        light0->light_position[2] += 0.5f;
         break;
     case 'j':
-        Environment::lightPos[0] += 0.5f;
+        light0->light_position[0] += 0.5f;
         break;
     case 't':
-        Environment::lightPos[1] -= 0.5f;
+        light0->light_position[1] -= 0.5f;
         break;
     case 'u':
-        Environment::lightPos[1] += 0.5f;
+        light0->light_position[1] += 0.5f;
+        break;
+    case 'r':
+        //snowman_entity->angulo_bracos += 2.0f;
+        //if (snowman_entity->angulo_bracos >= 70.0f) snowman_entity->angulo_bracos = 70.0f;
+        glDisable(light0->id);
+        break;
+    case 'f':
+        //snowman_entity->angulo_bracos -= 2.0f;
+        //if (snowman_entity->angulo_bracos <= -70.0f) snowman_entity->angulo_bracos = -70.0f;
+        glEnable(light0->id);
         break;
     case 'z':
-        flame->swirl_cycle++;
+        //flame->swirl_cycle++;
         break;
     case 'x':
-        if(flame->swirl_cycle>1)
-            flame->swirl_cycle--;
+        //if(flame->swirl_cycle>1)
+        //    flame->swirl_cycle--;
         break;
     default:break;
     }
@@ -138,16 +170,25 @@ void glKeyDown(unsigned char key) {
 
 void glKeyUp(unsigned char key){
     switch (key) {
+    case ',':
+        ganyu_move->updateOrientation(0, 0);
+        break;
+    case '.':
+        ganyu_move->updateOrientation(0, 0);
+        break;
     case 'q':
-        cam.updateOrientation(0);
+        cam->updateOrientation(0);
+        //box_position->updateOrientation(0);
         break;
     case 'e':
-        cam.updateOrientation(0);
+        cam->updateOrientation(0);
+        //box_position->updateOrientation(0);
         break;
     default:break;
     }
     //glutPostRedisplay();
 }
+*/
 
 
 void display(){
@@ -158,14 +199,16 @@ void display(){
     gluPerspective(Renderer::getActiveCamera()->fov, GLfloat(sWidth) / GLfloat(sHeight), 1.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    cam.updateCameraLookAt();
-    Environment::repositionLights();
+    Renderer::getActiveCamera()->updateCameraLookAt();
+    //cam->updateCameraLookAt();
+    GenericLight::reposition_lights();
+    //light0->reposition_light();
     glPushMatrix();
 
     Renderer::render_3D();
 
     glPopMatrix();
-    //glFlush();
+    //glFlush();?
 
     //glClear(GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
@@ -194,19 +237,40 @@ void reshape(GLint w, GLint h){
 }
 
 
-void init(){
-    //glShadeModel(GL_FLAT);
-    glShadeModel(GL_SMOOTH);
+/*
+// TO-DO
 
-    glEnable(GL_DEPTH_TEST);    // Hidden surface removal
-    glFrontFace(GL_CCW);        // Counter clock-wise polygons face out
-    glEnable(GL_CULL_FACE);     // Do not calculate inside
+Movement:
+    Vector-based movement direction
+    Euler-based orientation
+                                                 
+Movement has entity collision parameters         
+(reference? reference to models list(models having collision param)?)
+            ---------------------------------------------------------
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    
-    renderer->setActiveCamera(&cam);
-}
+finish lighting
+    |start shading
+    |START TEXTURES!!!
+
+create terrain mechanism
+
+z-buffer camera ( is default? )
+
+don't render off camera angles ( is default? )
+
+search ocluded objects ( probably not default!!! )
+
+Export blender
+    bones
+    animation
+    collision mesh
+    uv mapping
+
+Textures:
+    Shading
+    displacement map
+
+*/
 
 
 int main(int argc, char** argv){
@@ -224,44 +288,39 @@ int main(int argc, char** argv){
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     }
 
-    glm::vec3 gravity = glm::vec3(0, -1, 0);
 
-    DirectedParticle* snow_part = new DirectedParticle(true,2000, 400, 0.15f,35,
-        glm::vec3(1,1,1),0.002f, 0.5f,
-        glm::vec3(0,60,0),glm::vec3(0, -1, 0),
-        0,0, 0.5f, 0.8f);
-    snow_part->gravity = &gravity;
-    //snow_part->animate();
+    //glShadeModel(GL_FLAT);
+    glShadeModel(GL_SMOOTH);
+
+    glEnable(GL_DEPTH_TEST);    // Hidden surface removal
+    glFrontFace(GL_CCW);        // Counter clock-wise polygons face out
+    glEnable(GL_CULL_FACE);     // Do not calculate inside
+
+    /*glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, tex.GetId());
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);*/
     
-    flame->gravity = &gravity;
-    //flame->animate();
+    //glDepthFunc(GL_LEQUAL);
 
-    DotParticle* firework_explosion = new DotParticle(false,400, 40, 0,
-        glm::vec3(1, 0, 1), 0.02f, 0.45f,glm::vec3(0, 0, 0),
-        0, 0, 0.5f, 0.8f);
-    firework_explosion->gravity = &gravity;
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+
+    /*========================*/
+    /*=====   DEFAULT   ======*/
+    /*========================*/
+
+    AimlabGame* gameClass = AimlabGame::getInstance();
+    gameClass->init();
+    //gameClass->setup_targets();
+
     
-    DotParticle* firework_trail = new DotParticle(true,30, 15,0,
-        glm::vec3(1, 1, 0), 0.005f, 0.75f,glm::vec3(0, 0, 0),
-        0, 0, 0.2f, 0.8f);
-    firework_trail->gravity = &gravity;
 
-    /*DirectedParticle* firework = new DirectedParticle(2000, 400, 0.15f, 35,
-        glm::vec3(1, 1, 1), 0.002f, 0.5f,
-        glm::vec3(0, 60, 0), glm::vec3(0, -1, 0),
-        0, 0, 0.5f, 0.8f);*/
+    GenericLight::enable_lighting();
+    //light0->bind_light();
 
-    Firework* firework_emitter = new Firework(firework_trail,firework_explosion,
-        true,9,80,15,2.0f,glm::vec3(0,0,0),
-        glm::vec3(0,1,0));
-    firework_emitter->gravity = &gravity;
-    firework_emitter->animate();
-
-    //firework_trail->animate();
-    //firework_explosion->animate();
-
-
-    Environment::init();
+    //Environment::init();
     Renderer::init(&sWidth, &sHeight);
 
     glutSetCursor(GLUT_CURSOR_NONE);
@@ -273,11 +332,11 @@ int main(int argc, char** argv){
 
     // Bind dos Inputs de mouse
 
-    glutMotionFunc(glMouse);
-    glutPassiveMotionFunc(glMouse);
+    glutMotionFunc(AimlabGame_mouseMovementReceive);
+    glutPassiveMotionFunc(AimlabGame_mouseMovementReceive);
 
-    glutMouseFunc(glMouseClick);
-    glutMouseWheelFunc(glMouseWheel);
+    glutMouseFunc(AimlabGame_mouseClickReceive);
+    glutMouseWheelFunc(AimlabGame_mouseWheelReceive);
 
     // Bind de Teclado
 
@@ -286,22 +345,34 @@ int main(int argc, char** argv){
     glutKeyboardFunc(Input::keyDownReceiver);
     glutKeyboardUpFunc(Input::keyUpReceiver);
 
-    Input::keyDownCallback(glKeyDown);
-    Input::keyUpCallback(glKeyUp);
-    Input::spcDownCallback(glSpcDown);
-    Input::spcUpCallback(glSpcUp);
+    Input::keyDownCallback(AimlabGame_glKeyDown);
+    Input::keyUpCallback(AimlabGame_glKeyUp);
+    Input::spcDownCallback(AimlabGame_glSpcDown);
+    Input::spcUpCallback(AimlabGame_glSpcUp);
 
-    init();
     glutMainLoop();
     //for(int iii=0;iii < 10;iii++) glutMainLoopEvent(); // uma iteração só
 
-    //delete fireworks;
-    delete snow_part;
-    delete flame;
-    delete firework_trail;
-    delete firework_explosion;
-    delete firework_emitter;
+    //https://www.google.com/search?q=opengl+texture+basic
+    //https://learnopengl.com/Getting-started/Textures
+
+    Boid::stop_animate();
+    Firework::EndAnimation();
+    DirectedParticle::EndAnimation();
+    GenericParticle::End();
+
+    Texture::End();
+    Material::End();
+    GenericLight::End();
+    Boid::End();
+    Camera::End();
+    Physics::End();
+    Movement::End();
+    Texture::End();
+    Model::End();
+    Entity::End();
+
     Input::Stop();
-    Environment::Stop();
+    //Environment::Stop();
     Renderer::Stop();
 }

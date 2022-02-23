@@ -4,6 +4,8 @@
 #include <math.h>
 #include <iostream>
 
+std::vector<GenericParticle*> GenericParticle::part_list;
+
 std::list<DirectedParticle*> DirectedParticle::rendering_list;
 std::list<Firework*> Firework::rendering_list;
 std::thread DirectedParticle::particle_update;
@@ -17,10 +19,10 @@ void DirectedParticle::createParticleArray(){
     plane = glm::cross(direction, normal);
     ammount = default_ammount;
     if (emiter_radius==0){
-        for (int i = 0; i < ammount; i++) {
+        for (int i = 0; i < ammount; i++){
             float r1 = ((double)rand() / (RAND_MAX / 2)) - 1,
-                r2 = ((double)rand() / (RAND_MAX / 2)) - 1,
-                r3 = ((double)rand() / (RAND_MAX / 2)) - 1;
+                  r2 = ((double)rand() / (RAND_MAX / 2)) - 1,
+                  r3 = ((double)rand() / (RAND_MAX / 2)) - 1;
 
             particles[i].velocity[0] = start_velocity * r1 * displacement;
             particles[i].velocity[1] = start_velocity * r2 * displacement;
@@ -31,7 +33,7 @@ void DirectedParticle::createParticleArray(){
             //particles[i].lifetime = lifetime / 2 + (lifetime / 2) * ((double)rand() / (RAND_MAX));
             particles[i].lifetime = lifetime * ((double)rand() / (RAND_MAX));
         }
-    } else {
+    }else{
         for (int i = 0; i < ammount; i++) {
             float ag = rand() % 720;
             ag -= 360;
@@ -170,9 +172,14 @@ void DirectedParticle::updateParticles(){
             }else {
                 SingularParticle* particles = p->particles;
                 for (int i = 0; i < p->ammount; i++) {
-                    particles[i].position += particles[i].velocity;
-                    particles[i].velocity += (*p->gravity - particles[i].velocity) * p->weight * ((float)rand() / (RAND_MAX));
-                    particles[i].lifetime--;
+                    
+                    //!!  Problema  !!//
+                    
+                    if (p != NULL) {
+                        particles[i].position += particles[i].velocity;
+                        particles[i].velocity += (*p->gravity - particles[i].velocity) * p->weight * ((float)rand() / (RAND_MAX));
+                        particles[i].lifetime--;
+                    }
                 }
             }
         }
@@ -230,6 +237,10 @@ void Firework::animate(){
 
 void Firework::createFireworkArray(){
     glm::vec3 vb = glm::vec3(0.71f, 0.71f, 0);
+    normal = glm::cross(direction, vb);
+    if (glm::length(normal) == 0.0f){
+        vb = glm::vec3(-0.71f, 0.71f, 0);
+    }
     normal = glm::cross(direction, vb);
     plane = glm::cross(direction, normal);
 

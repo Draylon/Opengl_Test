@@ -1,13 +1,14 @@
 #ifndef PARTICLE_SYSTEM
 #define PARTICLE_SYSTEM
 
-#include <glm/glm.hpp>
-#include <GL/glut.h>
 
 #include "Texture.hpp"
 #include "Model.hpp"
 #include <list>
 #include <thread>
+
+#include <glm/glm.hpp>
+#include <GL/glut.h>
 
 #define PI180 0.01745329
 
@@ -79,13 +80,28 @@ public:
 		this->displacement = displacement;
 		this->reset_particle = reset_particles;
 		swirl_cycle = 0;
+
+		GenericParticle::part_list.push_back(this);
 	}
 	~GenericParticle() {
 		printf("Particle removed\n");
 	}
 
+	static void End() {
+		for (int i = 0; i < part_list.size(); i++) {
+			delete part_list[i];
+		}
+	}
+	virtual void EndAnimation() {
+		//particle_update_active = false;
+		//if (particle_update.joinable()) particle_update.join();
+	}
+
 	void createParticleArray();
 	void drawParticles();
+
+private:
+	static std::vector<GenericParticle*> part_list;
 };
 
 class DirectedParticle :public GenericParticle {
@@ -127,6 +143,12 @@ public:
 				particle_update_active = false;
 				if (particle_update.joinable()) particle_update.join();
 			}
+		}
+	}
+	static void EndAnimation() {
+		if (particle_update_active) {
+			particle_update_active = false;
+			if (particle_update.joinable()) particle_update.join();
 		}
 	}
 	void createParticleArray();
@@ -229,6 +251,12 @@ public:
 				delete trail_particles[i];
 				delete explosion_particles[i];
 			}
+		}
+	}
+	static void EndAnimation() {
+		if (firework_update_active) {
+			firework_update_active = false;
+			if (firework_update.joinable()) firework_update.join();
 		}
 	}
 	~Firework() {

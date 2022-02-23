@@ -1,0 +1,443 @@
+//========================
+// Objetos a serem controlados por algo fora da main
+
+//Castle* castle_entity;
+//Entity* box_entity;
+//RandomBox* box_model;
+
+Entity* ganyu_entity;
+Snowman* snowman_entity;
+//Snowman* snowman_entity2;
+//Snowman* snowman_entity3;
+
+
+
+PositionMovement* ganyu_move;
+PositionMovement* box_position;
+PositionMovement* boid_position;
+//PositionMovement* move3;
+
+
+//EulerCamera* cam = new EulerCamera(75, glm::vec3(0.0f, 8.0f, -30.0f), glm::vec3(0, 1, 0), 0, 0, 0);
+Camera* cam;
+//OrbitCamera* cam;
+
+
+VARIAVEIS ACIMA
+SEPARACAO DA MAIN============================
+CODE PRA DENTRO DA main()
+
+
+/*
+
+//Physics?
+    glm::vec3 gravity = glm::vec3(0, -1, 0);
+    Physics* physics = new Physics();
+    Force* f = new Force(gravity);
+    physics->add_actuator(f);
+    //physics->add_entity(cube);
+    //private physics.createEntityCollisionMesh
+    //
+    //private physics.createStaticCollisionMesh
+
+
+
+
+
+
+
+    GLfloat light_position[] = { 10.0, 1.0, 1.0, 1.0 };
+    GLfloat light_specular[] = { 1.0, 1.0, 0.0,1.0 };
+    GLfloat light_diffuse[] = { 0.50, 0.50, 0.5,1.0 };
+    GLfloat mat_specular[] = { 0.8, 0.5, 0.5, 1.0 };
+    GLfloat mat_shininess[] = { 5.0 };
+    GLfloat mat_ambient[] = { 0.2, 0.4, 0.99, 1.0 };
+    GLfloat mat_diffuse[] = { 0.4, 0.4, 0.4, 1.0 };
+
+    //Light Source
+    // Light values and coordinates
+    //GLfloat  whiteLight[] = { 0.05f, 0.05f, 0.05f, 1.0f };
+    //GLfloat  sourceLight[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+    //GLfloat  sourceLight2[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+    //GLfloat  l_position[] = { 0.0f,5.0f,0.0f,0 };
+    //GLfloat  ambient[] = { 0.25f, 0.25f, 0.25f };
+    //GLfloat  diffuse[] = { 0.75f, 0.75f, 0.75f };
+    //GLfloat  specular[] = {0.0f, 0.0f, 1.0f };
+    //GLfloat mat_shininess = 15.0f;
+
+    //light0 = new GenericLight(GL_LIGHT0, ambient, diffuse, specular, mat_shininess, 0, l_position);
+    light0 = new GenericLight(GL_LIGHT0, NULL, light_diffuse, light_specular, NULL, 0, light_position);
+
+    //Material* material1 = new Material(mat_ambient, mat_diffuse, mat_specular, mat_shininess);
+    Material::create("mat_general");
+    Material::setAmbient("mat_general", mat_ambient[0],mat_ambient[1],mat_ambient[2],mat_ambient[3]);
+    Material::setDiffuse("mat_general", mat_diffuse[0], mat_diffuse[1], mat_diffuse[2], mat_diffuse[3]);
+    Material::setSpecular("mat_general", mat_specular[0], mat_specular[1], mat_specular[2], mat_diffuse[3]);
+    Material::setSpecularExp("mat_general", mat_shininess[0]);
+    //Renderer::singular_material = Material::get("mat_general");
+
+
+
+
+    if (1 == 2) {
+        //Particle Systems
+        //Snow, Fire, Smoke, Fireworks, Rain
+
+        DirectedParticle* flame = new DirectedParticle(true, 400, 40, 0.15f, 0.2f,
+            glm::vec3(1, 0.6, 0.2), -0.004f, 0.004f,
+            glm::vec3(5, 0, -4), glm::vec3(0, 1, 0),
+            0.005f, 20, 0, 0.8f);
+
+        DirectedParticle* snow_part = new DirectedParticle(true, 2000, 400, 0.15f, 35,
+            glm::vec3(1, 1, 1), 0.002f, 0.5f,
+            glm::vec3(0, 60, 0), glm::vec3(0, -1, 0),
+            0, 0, 0.5f, 0.8f);
+        snow_part->gravity = &gravity;
+        //snow_part->animate();
+
+        flame->gravity = &gravity;
+        //flame->animate();
+
+        DotParticle* firework_explosion = new DotParticle(false, 400, 40, 0,
+            glm::vec3(1, 0, 1), 0.02f, 0.45f, glm::vec3(0, 0, 0),
+            0, 0, 0.5f, 0.8f);
+        firework_explosion->gravity = &gravity;
+
+        DotParticle* firework_trail = new DotParticle(true, 30, 15, 0,
+            glm::vec3(0, 1, 0.5), 0.005f, 0.75f, glm::vec3(0, 0, 0),
+            0, 0, 0.2f, 0.8f);
+        firework_trail->gravity = &gravity;
+
+        /*DirectedParticle* firework = new DirectedParticle(2000, 400, 0.15f, 35,
+            glm::vec3(1, 1, 1), 0.002f, 0.5f,
+            glm::vec3(0, 60, 0), glm::vec3(0, -1, 0),
+            0, 0, 0.5f, 0.8f);*/
+
+Firework* firework_emitter = new Firework(firework_trail, firework_explosion,
+    true, 9, 80, 15, 2.0f, glm::vec3(0, 0, 0),
+    glm::vec3(0, 1, 0));
+firework_emitter->gravity = &gravity;
+//firework_emitter->animate();
+
+//firework_trail->animate();
+//firework_explosion->animate();
+    }
+
+    //===================================
+    //===================================
+    //===================================
+
+
+    //Models
+    //==========
+
+    //Ganyu
+    /*
+    //ganyu_move = new PositionMovement(glm::vec3(-10, 0, 10), 0.4f, 1.0f,0,0,0);
+    ganyu_move = new PositionMovement(glm::vec3(5, 0, 2), 0.4f, 1.0f,0,0,0);
+
+    Model* ganyu_model = new Model("ganyu.obj");
+    //Texture* ganyu_tex = new Texture("ganyu.jpg");
+    //ganyu_model->setTexture(ganyu_tex);
+    ganyu_model->enableMaterials(true);
+    ganyu_model->enableTextures(true);
+    ganyu_entity = new Entity();
+    ganyu_entity->addModel(ganyu_model);
+    ganyu_entity->movement = ganyu_move;
+    */
+
+
+    if (1 == 2) {
+        ganyu_move = new PositionMovement(glm::vec3(5, 0, 2), 0.4f, 1.0f, 0, 0, 0);
+        Model* ganyu_model = new Model("cereal.obj");
+        //Texture* ganyu_tex = new Texture("ganyu.jpg");
+        //ganyu_model->setTexture(ganyu_tex);
+        ganyu_model->enableMaterials(true);
+        ganyu_model->enableTextures(true);
+        ganyu_entity = new Entity();
+        ganyu_entity->addModel(ganyu_model);
+        ganyu_entity->movement = ganyu_move;
+    }
+
+
+    /*PositionMovement *xicara_defaultPos = new PositionMovement(glm::vec3(5, 6, -4), 0.4f, 1.0f, 0, 0, 0);
+    Entity* xicara_entity = new Entity(xicara_defaultPos);
+    Model* xicara_model = new Model("cgr_xicara.obj");
+    Texture* xicara_tex = new Texture("cgr_xicara.jpg");
+    xicara_model->setTexture(xicara_tex);
+    xicara_entity->addModel(xicara_model);*/
+
+
+
+
+    //===============
+    //Teapot
+
+    /*PositionMovement* teapot_default_pos = new PositionMovement(glm::vec3(4.5, 4.8f, 0), 0.0f);
+    Entity* teapot_entity = new Entity(teapot_default_pos);
+    Teapot* teapot_model = new Teapot();
+    teapot_entity->addModel(teapot_model);*/
+
+    //arrumar um jeito do teapot entity seguir o quadrado
+    //position_binding
+
+
+    // ==============
+    // Snowman
+    //snowman_entity = new Snowman();
+
+
+    //===============
+    //Castelo
+
+    //GLfloat w = 30, h = 12, d = 2, gate_gap = 6, tower_height = 25,top_height = 15;
+    Entity* castle_entity = new Entity();
+    //Castle* castle_model = new Castle(5,3,0.3f,glm::vec3(0.5f,0.15f,1.0f),1.2f,6,3);
+    Castle* castle_model = new Castle(30, 12, 2, glm::vec3(0.5f, 0.15f, 1.0f), 6, 25, 15);
+    castle_model->setTexture(Texture::fetch("castle.jpg"));
+    castle_model->setMat(Material::get("mat_general"));
+    castle_entity->addModel(castle_model);
+    //glColor3f(0.4f, 0.2f, 0.6f);
+
+
+    //================
+    //Caixinha
+
+    Texture* boxTex = Texture::fetch("doge.jpg");
+    box_position = new PositionMovement(glm::vec3(10.0f, 5.0f, 10.0f), 1.0f, 1.0f, 90);
+    RandomBox* box_model = new RandomBox(5, 5, 5);
+    box_model->setTexture(boxTex);
+    box_model->setMat(Material::get("mat_general"));
+    Entity* box_entity = new Entity(box_position);
+    box_entity->addModel(box_model);
+
+
+    /*RandomBox* box_model2= new RandomBox(4, 4, 4);
+    PositionMovement *second_box = new PositionMovement(glm::vec3(5.0f, 2.0f, -4), 1.0f, 1.0f);
+    Entity* box_entity2 = new Entity(second_box);
+    box_entity2->addModel(box_model2);*/
+
+    //teapot_default_pos->attachMovement(box_position);
+
+
+    //============================
+    //============================
+    //============================
+
+    //boid_position = new PositionMovement(glm::vec3(0, 4, 0), 0.6f);
+    //ControlBoid* boids_system = new ControlBoid(boid_position,glm::vec3(1,1,0), NULL, NULL, 0.3, 0.6, 20, 3);
+    ////Boid* boids_system = new Boid(glm::vec3(0,4,0),glm::vec3(0,0,0),glm::vec3(0,0,1), NULL, NULL, 0.3, 0.6, 20, 3);
+    //std::list<Boid*> boid_swarm1 = boids_system->generate_boid_swarm(99);
+    ////boids_system->set_swarm_behaviour(boid_swarm1, BoidSwarmBehaviour::FLEE_EACHOTHER);
+    ////boids_system->updateFront(glm::vec3(0, 1, 0));
+    //Boid::animate();
+
+    //============================
+    //============================
+    //============================
+
+    //Algumas configs
+
+    //cam = new OrbitCamera(75,ganyu_entity,0,40);// follow entity
+    //cam = new EulerCamera(75, glm::vec3(0.0f, 8.0f, -30.0f), glm::vec3(0, 1, 0), 0, 0, 0);
+    //cam = new SimpleOrbitCamera(75,false, glm::vec3(0.0f, 8.0f, -30.0f), glm::vec3(0, 1, 0), 0, 0, 0,0.15f);
+    cam = new Camera(75, false, glm::vec3(0.0f, 8.0f, -30.0f), glm::vec3(0, 1, 0), 0, 0, 0, 0.15f);
+
+    rendererController->setActiveCamera(cam);
+
+    // add to Environment
+    // environment adds to render
+    //env->addEntity(snowman_entity);
+    //env->addLighting(light0);
+    //env->setPhysics(physics);
+
+    // snowman entity
+    // textured model entity
+    // 
+    // orientation-driven cube (new entity rotation)
+    // entity collision system
+    // entity physics pipeline
+    // entity movement testing
+    // 
+    //==============================
+    //==============================
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void glMouseWheel(int button, int dir, int x, int y){
+    cam->ProcessMouseScroll(dir);
+}
+
+void glMouseClick(int button, int state, int x, int y) {
+    //mouse click
+}
+
+
+void glMouse(int ox, int oy) {
+    //printf("%d , %d \n", ox, oy);
+    if (ox == SW2 && oy == SH2)return;
+    ox -= SW2;
+    oy -= SH2;
+    //box_position->updateOrientation(-ox,-oy);
+    cam->updatePerspective(ox,-oy);
+    
+    glutWarpPointer(SW2, SH2);
+    //glutPostRedisplay();
+}
+
+void glSpcDown(int key){
+    switch (key) {
+        case GLUT_KEY_CTRL_L:
+            cam->updatePosition(MovementDirection::DOWN);
+            //box_position->updatePosition(MovementDirection::DOWN);
+            break;
+        case GLUT_KEY_SHIFT_L:
+            if(cam->MovementSpeed!=1.0f)
+                cam->MovementSpeed = 1.0f;
+            break;
+        default:break;
+    }
+}
+
+void glSpcUp(int key) {
+    switch (key) {
+    case GLUT_KEY_SHIFT_L:
+        cam->MovementSpeed = 0.1f;
+        break;
+    default:break;
+    }
+}
+
+void glKeyDown(unsigned char key) {
+    switch (key) {
+    case 'k':
+        boid_position->updatePosition(MovementDirection::LEFT);
+        break;
+    case 'o':
+        boid_position->updatePosition(MovementDirection::FORWARD);
+        break;
+    case 'l':
+        boid_position->updatePosition(MovementDirection::BACKWARD);
+        break;
+    case ';':
+        boid_position->updatePosition(MovementDirection::RIGHT);
+        break;
+    case 'i':
+        boid_position->updatePosition(MovementDirection::UP);
+        break;
+    case 'p':
+        boid_position->updatePosition(MovementDirection::DOWN);
+        break;
+    case ',':
+        ganyu_move->updateOrientation(8, 0);
+        break;
+    case '.':
+        ganyu_move->updateOrientation(-8, 0);
+        break;
+    case 'q':
+        //box_position->updateOrientation(2);
+        cam->updateOrientation(2);
+        break;
+    case 'e':
+        //box_position->updateOrientation(-2);
+        cam->updateOrientation(-2);
+        break;
+    case 'w':
+        cam->updatePosition(MovementDirection::FORWARD);
+        //box_position->updatePosition(MovementDirection::FORWARD);
+        break;
+    case 's':
+        cam->updatePosition(MovementDirection::BACKWARD);
+        //box_position->updatePosition(MovementDirection::BACKWARD);
+        break;
+    case 'a':
+        cam->updatePosition(MovementDirection::LEFT);
+        //box_position->updatePosition(MovementDirection::LEFT);
+        //box_position->updateOrientation(-15,0);
+        break;
+    case 'd':
+        cam->updatePosition(MovementDirection::RIGHT);
+        //box_position->updatePosition(MovementDirection::RIGHT);
+        //box_position->updateOrientation(15,0);
+        break;
+    case ' ':
+        cam->updatePosition(MovementDirection::UP);
+        //box_position->updatePosition(MovementDirection::UP);
+        break;
+    case 'g':
+        light0->light_position[0] -= 0.5f;
+        break;
+    case 'y':
+        light0->light_position[2] -= 0.5f;
+        break;
+    case 'h':
+        light0->light_position[2] += 0.5f;
+        break;
+    case 'j':
+        light0->light_position[0] += 0.5f;
+        break;
+    case 't':
+        light0->light_position[1] -= 0.5f;
+        break;
+    case 'u':
+        light0->light_position[1] += 0.5f;
+        break;
+    case 'r':
+        //snowman_entity->angulo_bracos += 2.0f;
+        //if (snowman_entity->angulo_bracos >= 70.0f) snowman_entity->angulo_bracos = 70.0f;
+        glDisable(light0->id);
+        break;
+    case 'f':
+        //snowman_entity->angulo_bracos -= 2.0f;
+        //if (snowman_entity->angulo_bracos <= -70.0f) snowman_entity->angulo_bracos = -70.0f;
+        glEnable(light0->id);
+        break;
+    case 'z':
+        //flame->swirl_cycle++;
+        break;
+    case 'x':
+        //if(flame->swirl_cycle>1)
+        //    flame->swirl_cycle--;
+        break;
+    default:break;
+    }
+    //glutPostRedisplay();
+}
+
+void glKeyUp(unsigned char key){
+    switch (key) {
+    case ',':
+        ganyu_move->updateOrientation(0, 0);
+        break;
+    case '.':
+        ganyu_move->updateOrientation(0, 0);
+        break;
+    case 'q':
+        cam->updateOrientation(0);
+        //box_position->updateOrientation(0);
+        break;
+    case 'e':
+        cam->updateOrientation(0);
+        //box_position->updateOrientation(0);
+        break;
+    default:break;
+    }
+    //glutPostRedisplay();
+}

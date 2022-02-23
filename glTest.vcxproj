@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -169,6 +169,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Aimlab.cpp" />
+    <ClCompile Include="Boid.cpp" />
     <ClCompile Include="glad.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -178,20 +180,27 @@
     </ClCompile>
     <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="randomCube.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Movement.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="randomBox.cpp" />
     <ClCompile Include="Renderer.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
+    <ClCompile Include="teapot.cpp" />
+    <ClCompile Include="Teste2.cpp" />
     <ClCompile Include="Texture.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Aimlab.hpp" />
     <ClInclude Include="blender_snowman.cpp" />
     <ClCompile Include="Camera.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
+    <ClInclude Include="Boid.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="castle.cpp" />
     <ClCompile Include="Environment.cpp">
@@ -203,11 +212,14 @@
     </ClInclude>
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="LightSource.hpp" />
-    <ClInclude Include="Model.cpp">
+    <ClCompile Include="Model.cpp">
       <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
+    </ClCompile>
+    <ClInclude Include="main2.txt" />
+    <ClInclude Include="Material.hpp" />
     <ClInclude Include="Model.hpp" />
-    <ClInclude Include="Object.hpp" />
+    <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="Movement.hpp" />
     <ClInclude Include="ObjLoader.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
@@ -215,7 +227,9 @@
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
     <ClInclude Include="Particles.hpp" />
+    <ClInclude Include="Physics.hpp" />
     <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="ScreenConstraints.h" />
     <ClInclude Include="snowman.cpp" />
     <ClInclude Include="stb_image.hpp">
       <DeploymentContent>false</DeploymentContent>

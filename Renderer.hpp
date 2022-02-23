@@ -1,20 +1,24 @@
 #ifndef RENDERER_ENTITY
 #define RENDERER_ENTITY
 #include "Camera.hpp"
+#include "Material.hpp"
 #include <thread>
 
 //#include "blender_snowman.cpp"
 
 class Renderer {
 public:
+
+	//static Material* singular_material;
+
 	static Renderer* getInstance();
 	
 	static void render_3D(void);
 	//static void render_2D(void);
 	static void render_HUD(void);
 
-	static void setActiveCamera(EulerCamera* cam) { activeCamera = cam; }
-	static EulerCamera* getActiveCamera() { return activeCamera; }
+	static void setActiveCamera(Camera* cam) { activeCamera = cam; }
+	static Camera* getActiveCamera() { return activeCamera; }
 
 	static void updateScreen(void (*callback)());
 	static void init(GLint*, GLint*);
@@ -43,7 +47,7 @@ private:
 		fps_thread = std::thread(fps_function);
 	}
 	static Renderer* instance;
-	static EulerCamera* activeCamera;
+	static Camera* activeCamera;
 
 	//idéia pra fazer depois
 	//talvez aumente muito o n° de instruções
