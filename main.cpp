@@ -310,15 +310,17 @@ int main(int argc, char** argv){
     /*========================*/
     /*=====   DEFAULT   ======*/
     /*========================*/
-
+    
+    GenericLight::enable_lighting();
+    //light0->bind_light();
+    
     AimlabGame* gameClass = AimlabGame::getInstance();
     gameClass->init();
     //gameClass->setup_targets();
 
     
 
-    GenericLight::enable_lighting();
-    //light0->bind_light();
+    
 
     //Environment::init();
     Renderer::init(&sWidth, &sHeight);
@@ -355,6 +357,8 @@ int main(int argc, char** argv){
 
     //https://www.google.com/search?q=opengl+texture+basic
     //https://learnopengl.com/Getting-started/Textures
+
+    AimlabGame::End();
 
     Boid::stop_animate();
     Firework::EndAnimation();

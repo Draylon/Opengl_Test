@@ -61,6 +61,8 @@ public:
     //std::vector<std::string> materials;
     //std::vector< Vertex > verts;
 
+    bool allow_tex, allow_mat;
+
     bool mat_lib_defined;
     bool mesh_defined;
     std::vector<Mesh*> meshes;

@@ -64,7 +64,8 @@ public:
         //glColor3f((*color)[0], (*color)[1], (*color)[2]);
         glColor3f(1, 1, 1);
         
-        mat->apply();
+        if(allow_mat)
+            mat->apply();
 
         if (texture != NULL && texture != nullptr)
             texture->Bind();

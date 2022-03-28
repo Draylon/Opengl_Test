@@ -1,9 +1,9 @@
-#include "Entity.hpp"
+#ifndef BOIDS_HPP
+#define BOIDS_HPP
 #include <list>
 #include <thread>
 #include <map>
-#ifndef BOIDS_HPP
-#define BOIDS_HPP
+#include "Entity.hpp"
 
 enum BoidSwarmBehaviour {
 	SEEK_EACHOTHER, FLEE_EACHOTHER, SEEK_RANDOM, FLEE_RANDOM

@@ -16,7 +16,16 @@ void Movement::updatePosition(MovementDirection m) {
         attached_camera->staticUpdatePosition();
 }
 
-void Movement::updateMatrix() {
+void Movement::attachMovement(Movement* m, glm::vec3 translateDirection){
+    attachToFollow = m;
+    this->translateDirection = translateDirection;
+}
+
+void Movement::attachCameraOrientation(bool yaw, bool pitch, bool roll,bool usef){
+    attached_camera->bindMovementOrientations(this,yaw, pitch, roll,usef); 
+}
+
+void Movement::updateMatrix(){
     if (Yaw != 0)
         viewMatrix = glm::rotate(viewMatrix, glm::radians(Yaw), glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
     if (Pitch != 0)
@@ -29,9 +38,18 @@ void Movement::updateMatrix() {
     Front = glm::normalize(glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]));
     Up = glm::normalize(glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
     Right = glm::normalize(-glm::vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));
+    
+    if (attached_camera != NULL)
+        attached_camera->updateCameraLookAt();
 }
 
-void Movement::updateVectors() {
+void Movement::updateFromVector() {
+    Front = glm::normalize(glm::cross(Up,Right) );
+    viewMatrix = glm::translate(viewMatrix, Position);
+    
+}
+
+void Movement::updateVectors(){
     glm::vec3 front;
 
     front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
@@ -82,6 +100,31 @@ glm::vec3* Movement::getOrientationVector(int i){
     }
 }
 
+void Movement::preUpdateOrientation(float xoffset, float yoffset, float zoffset,bool useFrag) {
+    if (useFrag) {
+        Yaw += xoffset;
+        Pitch += yoffset;
+        Roll += zoffset;
+        return;
+    }
+    Yaw = xoffset!=0?xoffset:Yaw;
+    Pitch= yoffset!=0?yoffset:Pitch;
+    Roll= zoffset!=0?zoffset:Roll;
+}
+
+void Movement::preSetVectors(int i, glm::vec3 v) {
+    switch (i) {
+    case 0:Front=v;
+    case 1:Right=v;
+    case 2:Up=v;
+    default:return;
+    }
+}
+
+void Movement::preSetViewmatrix(glm::mat4 vm) {
+    viewMatrix = vm;
+}
+
 void Movement::updateOrientation(float xoffset, float yoffset, float zoffset) {
     Yaw += xoffset*MoveSensitivity, Pitch += yoffset*MoveSensitivity;
     Roll += zoffset * MoveSensitivity;
@@ -90,7 +133,10 @@ void Movement::updateOrientation(float xoffset, float yoffset, float zoffset) {
     if (Yaw < -180.0f) Yaw = 180.0f;
     if (Pitch > 180.0f) Pitch = -180.0f;
     if (Pitch < -180.0f) Pitch = 180.0f;
-
+    if (Roll > 180.0f) Roll = -180.0f;
+    if (Roll < -180.0f) Roll = 180.0f;
+    if (useMatrix) updateMatrix();
+    else updateVectors();
     return;
     if (xoffset != 0 || yoffset != 0) {
         xoffset *= MoveSensitivity;
@@ -104,7 +150,7 @@ void Movement::updateOrientation(float xoffset, float yoffset, float zoffset) {
     else {
         Roll = 0;
     }
-    updateVectors();
+    
 }
 
 void Movement::updateOrientation(float xoffset, float yoffset) {
@@ -114,7 +160,8 @@ void Movement::updateOrientation(float xoffset, float yoffset) {
     if (Pitch > 180.0f) Pitch = -180.0f;
     if (Pitch < -180.0f) Pitch = 180.0f;
 
-    updateVectors();
+    if (useMatrix) updateMatrix();
+    else updateVectors();
     return;
     if (xoffset != 0 || yoffset != 0) {
         xoffset *= MoveSensitivity*MoveSensitivity;
@@ -129,7 +176,8 @@ void Movement::updateOrientation(float zoffset) {
     if (Roll > 180.0f) Roll = -180.0f;
     if (Roll < -180.0f) Roll = 180.0f;
 
-    updateVectors();
+    if (useMatrix) updateMatrix();
+    else updateVectors();
     return;
     if (zoffset != 0) {
         zoffset *= MoveSensitivity;

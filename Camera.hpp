@@ -21,6 +21,10 @@ __interface ICamera{
 
 };
 
+struct BoundObjects {
+    bool yaw, pitch, roll,useFrag;
+};
+
 class Camera :public ICamera{
 private:
     static std::vector<Camera*> cam_list;
@@ -30,13 +34,18 @@ protected:
     float Zoom;
     bool allowUpsideDown;
 
-    glm::vec3 Position;
+    
     glm::vec3 WorldUp;
 
     glm::vec3 Up;
-    glm::vec3 Front;
+    
     glm::vec3 Right;
 public:
+
+    glm::mat4 viewMatrix = glm::identity<glm::mat4>();
+    glm::vec3 Position;
+    glm::vec3 Front;
+
     static void End() {
         for (int i = 0; i < cam_list.size(); i++)
             delete cam_list[i];
@@ -69,6 +78,11 @@ public:
     }
 
     Movement* objectPosition;
+    bool send_to_movement;
+    std::map<Movement*, BoundObjects> objectsOrientationBound;
+    bool send_viewMatrix;
+    std::vector<Movement*> objectsMatrixBound;
+    //bool bound_yaw, bound_pitch, bound_roll;
 
     Camera(GLfloat fov, Entity* followEntity,
         float sensitivity = SENSITIVITY,
@@ -99,7 +113,9 @@ public:
         this->updateCameraVectors();
         Position = *(objectPosition->getPositionVec()) - Front;
     }
-    
+    virtual void bindViewMatrix(Movement* m);
+    virtual void bindMovementOrientations(Movement* m, bool yaw, bool pitch, bool roll, bool usef);
+    //virtual void bindMovement(Movement*);
     virtual void staticUpdatePosition();
     virtual void updatePerspective(float xoffset, float yoffset);
     virtual void updateOrientation(float roll);

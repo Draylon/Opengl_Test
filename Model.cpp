@@ -128,12 +128,12 @@ void Model::loadOBJ(std::istream& in){
     }
 }
 
-void Model::enableTextures(bool){
-
+void Model::enableTextures(bool v){
+    allow_tex = v;
 }
 
-void Model::enableMaterials(bool){
-
+void Model::enableMaterials(bool v){
+    allow_mat = v;
 }
 
 void Model::loadMatLibrary(std::string libname){
@@ -219,7 +219,8 @@ void Model::render() {
 
     for (Mesh* m : meshes){
         //Material* mm = Material::get(m->material_id);
-        Material::apply(m->material_id);
+        if(allow_mat)
+            Material::apply(m->material_id);
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &m->verts[0].position);
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -233,7 +234,8 @@ void Model::render() {
         glDrawArrays(GL_TRIANGLES, 0, m->verts.size());
 
         //this->texture->Unbind();
-        Material::releaseTexture(m->material_id);
+        if (allow_mat)
+            Material::releaseTexture(m->material_id);
 
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);

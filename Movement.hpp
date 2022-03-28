@@ -44,41 +44,52 @@ protected:
     float MoveSensitivity;
     bool allowUpsideDown;
 
-    glm::vec3 Position;
+    
 
     glm::vec3 Up;
-    glm::vec3 Front;
+    
     glm::vec3 Right;
     
-    bool cameraOrientationDriven;
     Camera *attached_camera;
     Movement* attachToFollow;
+    glm::vec3 translateDirection;
 
 public:
+    glm::vec3 Position;
+    glm::vec3 Front;
+
     float Yaw = 0;
     float Pitch = 0;
     float Roll = 0;
+    bool useMatrix;
+    void setUseMatrix(bool f) { useMatrix = f; }
 
     static Movement* defaultBuild() {
         return new Movement(glm::vec3(0, 0, 0), 1.0f);
     }
 
     virtual void translate() {
-        if (attachToFollow != NULL)
+        if (attachToFollow != NULL) {
             attachToFollow->translate();
+            //attachToFollow->rotate();
+        }
         glTranslatef(Position[0], Position[1], Position[2]);
+        if (attachToFollow != NULL) {
+            glTranslatef(translateDirection[0], translateDirection[1], translateDirection[2]);
+        }
     }
     virtual void translate(GLfloat x, GLfloat y, GLfloat z);
     virtual void rotate();
 
+    void resetPosition(float x, float y, float z) { Position[0] = x; Position[1] = y; Position[2] = z; }
+    void alterPosition(float x, float y, float z) { Position[0] += x; Position[1] += y; Position[2] += z; }
     void attachCamera(Camera* c) {
         this->attached_camera = c;
     }
     void detachCamera() { this->attached_camera = nullptr; }
-    void attachMovement(Movement* m) {attachToFollow = m;}
+    void attachMovement(Movement* m, glm::vec3 translateDirection);
     void detachMovement() {attachToFollow = nullptr;}
-    void attachCameraOrientation() { cameraOrientationDriven = true; }
-    void detachCameraOrientation() { cameraOrientationDriven = false; }
+    void attachCameraOrientation(bool yaw, bool pitch, bool roll,bool usef);
 
     glm::vec3* getPositionVec() { return &Position; }
     GLfloat getPosition(int i) { return (Position)[i]; }
@@ -106,8 +117,12 @@ public:
         printf("movement destructor called\n");
     }
     virtual void updateVectors();
+    virtual void updateFromVector();
     virtual void updateMatrix();
     virtual void updatePosition(MovementDirection);
+    virtual void preSetViewmatrix(glm::mat4 vm);
+    virtual void preSetVectors(int i,glm::vec3 v);
+    virtual void preUpdateOrientation(float xoffset, float yoffset, float zoffset,bool useFrag);
     virtual void updateOrientation(float xoffset, float yoffset, float zoffset);
     virtual void updateOrientation(float xoffset, float yoffset);
     virtual void updateOrientation(float zoffset);

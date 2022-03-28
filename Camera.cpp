@@ -26,6 +26,19 @@ void Camera::updateOrientation(float roll){
     if (roll < -180.0f) roll = 180.0f;
 }
 
+
+void Camera::bindViewMatrix(Movement* m) {
+    send_viewMatrix = true;
+    objectsMatrixBound.emplace(m);
+}
+
+
+void Camera::bindMovementOrientations(Movement* m, bool yaw, bool pitch, bool roll, bool usef){
+        send_to_movement = true;
+        objectsOrientationBound.emplace(m, BoundObjects{ yaw,pitch,roll,usef });
+        //bound_yaw=yaw, bound_pitch=pitch, bound_roll=roll;
+}
+
 void Camera::staticUpdatePosition() {
     //nothing?
     Position = *(objectPosition->getPositionVec()) - Front;//this->max_distance;
@@ -33,12 +46,12 @@ void Camera::staticUpdatePosition() {
 
 void Camera::updatePosition(MovementDirection direction){
     switch (direction){
-    case FORWARD:  Position += Front * MovementSpeed;  break;
+    case FORWARD:  Position += Front * MovementSpeed; break;
     case BACKWARD: Position -= Front * MovementSpeed; break;
-    case LEFT:     Position -= Right * MovementSpeed;     break;
-    case RIGHT:    Position += Right * MovementSpeed;    break;
-    case UP:       Position += Up * MovementSpeed;          break;
-    case DOWN:     Position -= Up * MovementSpeed;        break;
+    case LEFT:     Position -= Right * MovementSpeed; break;
+    case RIGHT:    Position += Right * MovementSpeed; break;
+    case UP:       Position += Up * MovementSpeed;    break;
+    case DOWN:     Position -= Up * MovementSpeed;    break;
     default:break;
     }
 }
@@ -70,13 +83,43 @@ void Camera::updatePerspective(float xoff,float yoff) {
     if (Pitch > 180.0f) Pitch = -180.0f;
     if (Pitch < -180.0f) Pitch = 180.0f;
     this->updateCameraVectors();
+
+    if (send_to_movement){
+        for (std::pair<Movement*, BoundObjects> pr : objectsOrientationBound){
+            if (pr.second.useFrag) {
+                if (pr.second.pitch)
+                    pr.first->preSetVectors(1, Up);
+                if (pr.second.yaw)
+                    pr.first->preSetVectors(0, Right);
+                if (pr.second.roll)
+                    pr.first->preSetVectors(2, Front);
+                pr.first->updateFromVector();
+            }else {
+                if (pr.second.pitch)
+                    pr.first->preUpdateOrientation(0, pr.second.useFrag?xoff:Pitch, 0, pr.second.useFrag);
+                if (pr.second.yaw)
+                    pr.first->preUpdateOrientation(pr.second.useFrag?yoff:Yaw, 0, 0, pr.second.useFrag);
+                if (pr.second.roll)
+                    pr.first->preUpdateOrientation(0, 0, Roll, pr.second.useFrag);
+                if (pr.second.useFrag)
+                    pr.first->updateMatrix();
+                else pr.first->updateVectors();
+            }
+            
+        }
+    }
+    if (send_viewMatrix) {
+        for (Movement* m : objectsMatrixBound) {
+            m->preSetViewmatrix(this->viewMatrix);
+        }
+    }
 }
 
 //=======================================
 //=======================================
 //=======================================
 
-void EulerCamera::updateOrientation(float roll) {
+void EulerCamera::updateOrientation(float roll){
     if (roll != 0){
         roll *= MouseSensitivity;
         Roll = roll;

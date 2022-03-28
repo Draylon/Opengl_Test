@@ -59,7 +59,7 @@ public:
 		printf("GenericLight deleted\n");
 	}
 	static void End() {
-		light_list.begin();
+		//light_list.begin();
 		for (auto e = light_list.begin(); e != light_list.end();e++) {
 			delete (*e).second;
 		}

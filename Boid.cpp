@@ -1,5 +1,6 @@
 #include "Boid.hpp"
-#include "utils.h"
+
+#include <glm/glm.hpp>
 
 std::vector<Boid*> Boid::boids_list;
 std::list<Boid*> Boid::rendering_list;
@@ -92,19 +93,25 @@ void Boid::render_all() {
 //==============================
 //==============================
 
+static float gr1(int iv) {
+    float r = (float)rand() / (RAND_MAX);
+    if ((float)rand() / (RAND_MAX) < 0.5)
+        r *= -1;
+    return r * iv;
+}
 
 std::list<Boid*> Boid::generate_boid_swarm(unsigned int ammount) {
     std::list<Boid*> ret;
     for (int i = 0; i < ammount; i++){
         glm::vec3 rpos(*this->Position);
         glm::vec3 rfrt(*this->Front);
-        rpos[0] += gr(1);
-        rpos[1] += gr(1);
-        rpos[2] += gr(1);
+        rpos[0] += gr1(1);
+        rpos[1] += gr1(1);
+        rpos[2] += gr1(1);
         rfrt = glm::normalize(glm::vec3(
-            rfrt[0] + gr(7),
-            rfrt[1] + gr(7),
-            rfrt[2] + gr(7)
+            rfrt[0] + gr1(7),
+            rfrt[1] + gr1(7),
+            rfrt[2] + gr1(7)
         ));
         Boid* bb=new Boid(rpos,rfrt, glm::vec3(1, 1, 1), this->model, this->physics, this->seek_strength, this->flee_strength, this->seek_range, this->flee_range, this->auto_avoid_collision);
         

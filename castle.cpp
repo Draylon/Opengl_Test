@@ -110,20 +110,20 @@ public:
 
         glTranslatef(-w - d / 2, 0, -w - d / 2);
         glRotatef(90, -1, 0, 0);
-        gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
-        drawPillar(pObj);
+        //gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
+        //drawPillar(pObj);
 
         glTranslatef(2 * w + d, 0, 0);
-        gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
-        drawPillar(pObj);
+        //gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
+        //drawPillar(pObj);
 
         glTranslatef(0, -2 * w - d, 0);
-        gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
-        drawPillar(pObj);
+        //gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
+        //drawPillar(pObj);
 
         glTranslatef(-2 * w - d, 0, 0);
-        gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
-        drawPillar(pObj);
+        //gluCylinder(pObj, tower_diameter, tower_diameter, tower_height, 26, 13);
+        //drawPillar(pObj);
 
         glPopMatrix();
         

@@ -6,6 +6,7 @@
 #include "Particles.hpp"
 #include "Material.hpp"
 #include "Boid.hpp"
+#include "Aimlab.hpp"
 
 #define SCR_WIDTH 1580
 #define SCR_HEIGHT 1020
@@ -81,6 +82,7 @@ void Renderer::init(GLint* w,GLint* h){
 
 //unsigned char* draw_angles_str = (unsigned char*)malloc(27 * sizeof(char));
 unsigned char* draw_fps_str = (unsigned char*)malloc(27 * sizeof(char));
+unsigned char* draw_hits_str = (unsigned char*)malloc(27 * sizeof(char));
 void Renderer::render_HUD(){
     
     //draw camera angles
@@ -102,6 +104,25 @@ void Renderer::render_HUD(){
         glutBitmapString(GLUT_BITMAP_HELVETICA_18, draw_fps_str);
         glEnable(GL_LIGHTING);
     }
+    
+    //draw FPS
+    if (draw_hits_str != NULL) {
+        glDisable(GL_LIGHTING);
+        glColor3f(1, 1, 1);
+        glRasterPos2d(400, 700);
+        sprintf_s((char*)draw_hits_str, 27 * sizeof(char), "%u", Target::player_hits);
+        glutBitmapString(GLUT_BITMAP_HELVETICA_18, draw_hits_str);
+        glEnable(GL_LIGHTING);
+    }
+    
+    //draw DOT
+    glDisable(GL_LIGHTING);
+    glColor3f(1, 0, 0);
+    glRasterPos2d(650, 360);
+    sprintf_s((char*)draw_hits_str, 27 * sizeof(char), ".", "");
+    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, draw_hits_str);
+    glEnable(GL_LIGHTING);
+    
 }
 
 void Renderer::render_3D(){
